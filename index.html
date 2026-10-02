@@ -78,10 +78,12 @@
     document.head.appendChild(style);
     const main = document.getElementById("app");
     const banner = document.createElement("div");
-    banner.className = "alert";
+    banner.className = "alert info";
     banner.innerHTML = "<span>🧪</span><span><b>Демо-версия.</b> Проекты вымышленные, заявка никуда не отправляется — "
       + "в конце видно, что ушло бы DevOps.</span>";
-    main.insertBefore(banner, main.children[1]);
+    banner.style.marginTop = "0";
+    banner.style.marginBottom = "12px";
+    main.insertBefore(banner, main.firstChild);
     const done = document.getElementById("done");
     new MutationObserver(() => {
       if (!done.hidden && last && !done.querySelector(".demo-sent")) {
@@ -97,202 +99,213 @@
 </script>
 <style>
   /* Telegram passes its theme as --tg-theme-*; outside Telegram the system light / dark defaults apply. */
-  :root {
-    --fb-bg: #f2f2f7; --fb-card: #ffffff; --fb-text: #000000; --fb-hint: #8e8e93; --fb-accent: #007aff;
-    --fb-sep: rgb(60 60 67 / .2);
-  }
+  :root { --fb-bg: #f5f5f2; --fb-card: #ffffff; --fb-text: #141414; --fb-hint: #5c5c5c; --fb-accent: #1f6fc5; }
   @media (prefers-color-scheme: dark) {
-    :root { --fb-bg: #000000; --fb-card: #1c1c1e; --fb-text: #ffffff; --fb-hint: #8e8e93; --fb-accent: #0a84ff; --fb-sep: rgb(84 84 88 / .6); }
+    :root { --fb-bg: #101111; --fb-card: #1c1d1d; --fb-text: #f2f2ee; --fb-hint: #a8a8a1; --fb-accent: #4c9bea; }
   }
   :root {
     --bg: var(--tg-theme-secondary-bg-color, var(--fb-bg));
     --card: var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, var(--fb-card)));
     --text: var(--tg-theme-text-color, var(--fb-text));
-    --hint: var(--tg-theme-hint-color, var(--fb-hint));
-    --head: var(--tg-theme-section-header-text-color, var(--hint));
+    --hint: var(--tg-theme-subtitle-text-color, var(--tg-theme-hint-color, var(--fb-hint)));
     --accent: var(--tg-theme-button-color, var(--fb-accent));
     --accent-text: var(--tg-theme-button-text-color, #ffffff);
     --link: var(--tg-theme-link-color, var(--accent));
-    --danger: var(--tg-theme-destructive-text-color, #ff3b30);
-    --sep: var(--tg-theme-section-separator-color, var(--fb-sep));
-    --fill: color-mix(in srgb, var(--text) 8%, transparent);
-    --r: 12px;
+    --danger: var(--tg-theme-destructive-text-color, #d93a3a);
+    --line: color-mix(in srgb, var(--text) 12%, transparent);
+    --fill: color-mix(in srgb, var(--text) 6%, var(--card));
+    --soft: color-mix(in srgb, var(--accent) 11%, var(--card));
+    --amber-bg: color-mix(in srgb, #e0a10b 20%, var(--card));
+    --amber-text: color-mix(in srgb, #8a5a00 72%, var(--text));
   }
-  /* WebViews without color-mix() (Android before Chrome 111, older Linux Telegram Desktop): plain greys, else the controls vanish */
+  /* WebViews without color-mix() (Android before Chrome 111, older Linux Telegram Desktop): plain tints */
   @supports not (color: color-mix(in srgb, red, blue)) {
-    :root { --fill: rgb(120 120 128 / .16); }
-    .tick { border-color: rgb(120 120 128 / .6); }
-    .alert.error { background: rgb(255 59 48 / .12); }
+    :root { --line: rgb(128 128 128 / .28); --fill: rgb(128 128 128 / .12); --soft: rgb(31 111 197 / .12);
+      --amber-bg: rgb(224 161 11 / .2); --amber-text: var(--text); }
+    .ico { background: var(--fill) !important; }
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; background: var(--bg); color: var(--text);
-    font: 16px/1.35 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-    -webkit-font-smoothing: antialiased; }
+    font: 16px/1.4 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   button, input, textarea, select { font: inherit; color: inherit; }
-  button { background: none; border: 0; padding: 0; cursor: pointer; }
-  main { max-width: 600px; margin: 0 auto; padding: 12px 16px 96px; display: grid; gap: 22px; }
-  [hidden] { display: none !important; }
+  button { cursor: pointer; }
   svg { flex: none; }
+  [hidden] { display: none !important; }
+  main { max-width: 560px; margin: 0 auto; padding: 14px 20px 112px; }
 
-  /* top */
-  .top { display: flex; align-items: center; gap: 10px; padding: 2px 4px 0; }
-  .avatar { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--accent);
-    color: var(--accent-text); font-weight: 700; font-size: 15px; }
-  .top h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
-  .top .who { color: var(--hint); font-size: 13px; }
+  /* step head */
+  .back { display: inline-flex; align-items: center; gap: 2px; min-height: 36px; margin: -4px 0 6px -4px; padding: 0 4px; border: 0;
+    background: none; color: var(--link); font-size: 15px; font-weight: 600; }
+  .progress { display: flex; gap: 6px; }
+  .progress span { flex: 1; height: 4px; border-radius: 2px; background: var(--line); transition: background .25s ease; }
+  .progress span.is-on { background: var(--accent); }
+  .head { display: grid; gap: 6px; margin: 14px 0 18px; }
+  .eyebrow { font-size: 13px; font-weight: 600; color: var(--hint); }
+  h1 { margin: 0; font-size: 28px; line-height: 1.15; font-weight: 800; letter-spacing: -.02em; }
+  .sub { margin: 0; font-size: 15px; color: var(--hint); }
+  .alert { border-radius: 14px; padding: 12px 14px; margin-top: 14px; font-size: 15px; }
+  .alert.error { background: color-mix(in srgb, var(--danger) 12%, var(--card)); color: var(--danger); font-weight: 600; }
+  .alert.info { background: var(--card); border: 1.5px solid var(--line); }
+  .alert .help { margin-top: 4px; }
 
-  /* type launcher: app icons */
-  .launcher { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: var(--card); border-radius: var(--r); padding: 12px 6px; }
-  .app { display: grid; justify-items: center; gap: 6px; padding: 8px 2px; border-radius: 10px; text-align: center; animation: rise .3s ease both; }
-  .app:active { background: var(--fill); }
-  .app .t { font-size: 12.5px; line-height: 1.2; font-weight: 500; }
-  .sq { width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center; font-size: 25px; background: var(--g);
-    box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .2), 0 2px 6px rgb(0 0 0 / .12); }
-  .sq.sm { width: 30px; height: 30px; border-radius: 8px; font-size: 16px; box-shadow: none; }
+  /* step 1: types */
+  .types { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .tcard { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-height: 108px; padding: 14px;
+    border-radius: 18px; background: var(--card); border: 1.5px solid var(--line); text-align: left; transition: border-color .15s ease, box-shadow .15s ease, transform .1s ease; }
+  .tcard:active { transform: scale(.98); }
+  .tcard[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 6px 18px color-mix(in srgb, var(--accent) 16%, transparent); }
+  .tcard.wide { grid-column: 1 / -1; flex-direction: row; align-items: center; min-height: 66px; }
+  .tcard .tx { display: grid; gap: 3px; padding-right: 18px; }
+  .tname { font-size: 15px; font-weight: 700; }
+  .twho { font-size: 12.5px; line-height: 1.3; color: var(--hint); }
+  .badge { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--accent-text);
+    display: none; place-items: center; }
+  .tcard[aria-pressed="true"] .badge { display: grid; }
+  .ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 15%, var(--card)); flex: none; }
+  .ico.sm { width: 36px; height: 36px; border-radius: 10px; }
 
-  /* grouped lists */
-  .group { display: grid; gap: 6px; }
-  .group-h { padding: 0 16px; color: var(--head); font-size: 13px; text-transform: uppercase; letter-spacing: .02em; }
-  .group-f { padding: 0 16px; color: var(--hint); font-size: 13px; }
-  .card { background: var(--card); border-radius: var(--r); overflow: hidden; }
-  .cell { position: relative; display: block; width: 100%; text-align: left; }
-  .cell + .cell::before, .line + .line::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px;
-    background: var(--sep); transform: scaleY(.5); transform-origin: top; }
-  .row { display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 8px 16px; }
-  .row > .grow { flex: 1; min-width: 0; }
-  .lb { display: flex; align-items: center; gap: 8px; }
-  .lb .ic { width: 22px; text-align: center; font-size: 16px; }
-  .val { margin-left: auto; color: var(--hint); max-width: 58%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .val.on { color: var(--text); }
-  .chev { color: var(--hint); opacity: .6; }
-  button.cell:active, .tap:active { background: var(--fill); }
-  .invalid .lb { color: var(--danger); }
+  /* fields */
+  .fields { display: grid; gap: 20px; }
+  .field { display: grid; gap: 8px; }
+  .flabel { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; font-weight: 600; }
+  .opt { font-weight: 500; color: var(--hint); }
+  .help { margin: 0; font-size: 13px; color: var(--hint); }
+  .input { width: 100%; min-height: 50px; padding: 12px 14px; border-radius: 14px; background: var(--card); border: 1.5px solid var(--line); outline: 0;
+    font-size: 16px; transition: border-color .15s ease, box-shadow .15s ease; }
+  textarea.input { resize: none; line-height: 1.4; min-height: 92px; overflow: hidden; }
+  .input::placeholder, .inrow input::placeholder, .search input::placeholder, .kv input::placeholder { color: color-mix(in srgb, var(--hint) 80%, transparent); }
+  .input:focus, .inrow:focus-within, .search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+  .inrow { display: flex; align-items: center; gap: 10px; min-height: 50px; padding: 0 8px 0 14px; border-radius: 14px; background: var(--card); border: 1.5px solid var(--line); }
+  .inrow > svg { color: var(--hint); }
+  .inrow input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; padding: 12px 0; font-size: 16px; }
+  .x { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--fill); color: var(--hint); display: grid; place-items: center; }
+  .add { justify-self: start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 2px; border: 0; background: none;
+    color: var(--link); font-size: 15px; font-weight: 600; }
+  .invalid .flabel { color: var(--danger); }
+  .invalid .input, .invalid .inrow, .invalid .list, .invalid .search { border-color: var(--danger); }
+  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: var(--fill); }
+  .seg button { min-height: 42px; border: 0; border-radius: 10px; background: transparent; font-size: 15px; font-weight: 600; transition: background .15s ease; }
+  .seg button[aria-pressed="true"] { background: var(--card); box-shadow: 0 1px 3px rgb(0 0 0 / .16); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; background: var(--card);
+    border: 1.5px solid var(--line); font-size: 15px; font-weight: 500; }
+  .chip[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+  .chip.more { border-style: dashed; background: transparent; color: var(--link); font-weight: 600; }
 
-  /* stacked: a small caption over the input */
-  .stack { padding: 8px 16px 9px; display: grid; gap: 2px; }
-  .cap { display: flex; align-items: center; gap: 6px; color: var(--hint); font-size: 12.5px; font-weight: 500; }
-  .invalid .cap { color: var(--danger); }
-  .stack input, .stack textarea, .line input { width: 100%; border: 0; outline: 0; background: transparent; padding: 2px 0; font-size: 16px; }
-  .stack textarea { resize: none; min-height: 24px; line-height: 1.35; overflow: hidden; }
-  input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--hint) 75%, transparent); }
-  .inline-input { margin-left: auto; border: 0; outline: 0; background: var(--fill); border-radius: 8px; padding: 6px 10px; font-size: 16px;
-    color: var(--text); min-width: 0; }
+  /* step 2: pick from a list */
+  .search { display: flex; align-items: center; gap: 10px; min-height: 50px; padding: 0 14px; border-radius: 14px; background: var(--card);
+    border: 1.5px solid var(--line); color: var(--hint); }
+  .search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; padding: 12px 0; font-size: 16px; color: var(--text); }
+  .list { border-radius: 18px; background: var(--card); border: 1.5px solid var(--line); overflow: hidden; }
+  .row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 58px; padding: 8px 16px; border: 0; background: transparent; text-align: left; }
+  .row + .row { border-top: 1px solid var(--line); }
+  .row[aria-checked="true"] { background: var(--soft); }
+  .radio { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--hint) 70%, transparent); display: grid; place-items: center; }
+  .row[aria-checked="true"] .radio { border-color: var(--accent); }
+  .row[aria-checked="true"] .radio::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+  .row .tx { display: grid; gap: 2px; min-width: 0; }
+  .row .nm { font-size: 16px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+  .row .ds { font-size: 13px; color: var(--hint); }
+  .row.custom { color: var(--link); font-weight: 600; }
 
-  /* segmented control, chips, switch, checkbox */
-  .seg { display: inline-flex; margin-left: auto; padding: 2px; border-radius: 9px; background: var(--fill); }
-  .seg button { padding: 5px 12px; border-radius: 7px; font-size: 14px; font-weight: 600; color: var(--text); transition: background .15s ease; }
-  .seg button[aria-pressed="true"] { background: var(--card); box-shadow: 0 1px 3px rgb(0 0 0 / .14), 0 0 0 .5px rgb(0 0 0 / .04); }
-  .chips { display: inline-flex; gap: 6px; margin-left: auto; flex-wrap: wrap; justify-content: flex-end; }
-  .chip { padding: 6px 12px; border-radius: 999px; background: var(--fill); font-size: 14px; font-weight: 600; transition: background .15s ease; }
-  .chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
-  .switch { position: relative; flex: none; width: 51px; height: 31px; border-radius: 999px; background: var(--fill); transition: background .2s ease; margin-left: auto; }
+  /* step 4: files and env */
+  .cards { display: grid; gap: 12px; }
+  .fcard { border-radius: 18px; background: var(--card); border: 1.5px solid var(--line); overflow: hidden; }
+  .fhead { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 8px 16px; }
+  .fhead .tx { flex: 1; display: grid; gap: 2px; min-width: 0; }
+  .fhead .tt { font-size: 16px; font-weight: 700; }
+  .fhead .ts { font-size: 13px; color: var(--hint); }
+  .switch { position: relative; flex: none; width: 51px; height: 31px; border-radius: 16px; border: 0; background: var(--line); transition: background .2s ease; }
   .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #ffffff;
-    box-shadow: 0 2px 4px rgb(0 0 0 / .2); transition: transform .2s ease; }
+    box-shadow: 0 2px 4px rgb(0 0 0 / .22); transition: transform .2s ease; }
   .switch[aria-checked="true"] { background: var(--accent); }
   .switch[aria-checked="true"]::after { transform: translateX(20px); }
-  .tick { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--hint) 70%, transparent);
-    display: grid; place-items: center; color: transparent; transition: background .15s ease, border-color .15s ease; }
-  [aria-checked="true"] > .tick { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  .fbody { border-top: 1px solid var(--line); padding: 12px 16px; display: grid; gap: 8px; }
+  .frow { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 12px 6px 16px; border-top: 1px solid var(--line); }
+  .frow .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; font-weight: 600; }
+  .frow .sz { font-size: 13px; color: var(--hint); }
+  .fbtn { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 50px; padding: 0 16px; border: 0; border-top: 1px solid var(--line);
+    background: transparent; color: var(--link); font-size: 15px; font-weight: 600; text-align: left; }
+  .pill { flex: none; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 0; background: var(--soft); color: var(--link); font-size: 14px; font-weight: 700; }
+  .kv { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) 34px; gap: 8px; align-items: center; }
+  .kv input { min-width: 0; min-height: 42px; padding: 0 10px; border-radius: 10px; border: 1.5px solid transparent; background: var(--fill); outline: 0;
+    font: 14px/1.2 ui-monospace, "SF Mono", Menlo, monospace; }
+  .kv input:focus { border-color: var(--accent); }
+  .secret { min-height: 42px; padding: 0 10px; border-radius: 10px; background: var(--amber-bg); color: var(--amber-text); display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; }
 
-  /* nested lines: links, env rows, files */
-  .lines { padding-left: 0; }
-  .line { position: relative; display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 6px 16px; text-align: left; }
-  .add > span { white-space: nowrap; }
-  .line.kv input { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 15px; }
-  .line .eq { color: var(--hint); }
-  .x { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--fill); color: var(--hint); font-size: 12px; }
-  .add { color: var(--link); font-weight: 500; }
-  .add .plus { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-text);
-    font-size: 17px; line-height: 1; }
-  .file .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .file .sz { color: var(--hint); font-size: 13px; }
-  .file .fi { width: 22px; text-align: center; }
-  .add .s { min-width: 0; color: var(--hint); font-size: 13px; margin-left: auto; overflow: hidden; text-overflow: ellipsis; }
-
-  /* the type row */
-  .type-row .tt { font-weight: 600; }
-  .type-row .ts { color: var(--hint); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .change { color: var(--link); font-size: 15px; display: flex; align-items: center; gap: 2px; }
-
-  /* banners */
-  .alert { border-radius: var(--r); padding: 12px 14px; background: var(--card); font-size: 15px; display: flex; gap: 10px; }
-  .alert.error { background: color-mix(in srgb, var(--danger) 12%, var(--card)); color: var(--danger); font-weight: 500; }
-  .alert .hint { color: var(--hint); font-size: 13px; }
-
-  /* bottom sheet */
-  .back { position: fixed; inset: 0; background: rgb(0 0 0 / .35); opacity: 0; transition: opacity .2s ease; z-index: 20; }
-  .back.on { opacity: 1; }
-  .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 21; max-width: 600px; margin: 0 auto; max-height: 82vh; display: flex; flex-direction: column;
-    background: var(--bg); border-radius: 14px 14px 0 0; transform: translateY(100%); transition: transform .25s cubic-bezier(.2, .8, .2, 1);
-    padding-bottom: env(safe-area-inset-bottom); }
-  .sheet.on { transform: none; }
-  .grab { width: 36px; height: 5px; border-radius: 3px; background: var(--fill); margin: 7px auto 2px; }
-  .sheet-h { display: flex; align-items: center; padding: 6px 16px 10px; }
-  .sheet-h b { flex: 1; text-align: center; font-size: 17px; font-weight: 600; margin-left: 52px; }
-  .sheet-h button { color: var(--link); font-weight: 600; width: 52px; text-align: right; }
-  .search { margin: 0 16px 10px; display: flex; align-items: center; gap: 6px; background: var(--fill); border-radius: 10px; padding: 7px 10px; color: var(--hint); }
-  .search input { flex: 1; border: 0; outline: 0; background: transparent; font-size: 16px; color: var(--text); }
-  .sheet-list { overflow-y: auto; margin: 0 16px 16px; background: var(--card); border-radius: var(--r); }
-  .opt { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 46px; padding: 8px 16px; text-align: left; position: relative; }
-  .opt + .opt::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--sep); transform: scaleY(.5); }
-  .opt:active { background: var(--fill); }
-  .opt .ol { flex: 1; min-width: 0; display: grid; }
-  .opt .os { color: var(--hint); font-size: 13px; }
-  .opt.custom { color: var(--link); font-weight: 500; }
-  .opt.muted { color: var(--danger); }
-  .opt .ok { color: var(--accent); }
-  .empty { padding: 16px; color: var(--hint); text-align: center; font-size: 15px; }
+  /* step 5: review */
+  .stack { display: grid; gap: 12px; }
+  .rcard { border-radius: 18px; background: var(--card); border: 1.5px solid var(--line); padding: 4px 16px 10px; }
+  .rhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0 2px; }
+  .rhead h2 { margin: 0; font-size: 13px; font-weight: 700; color: var(--hint); letter-spacing: .04em; text-transform: uppercase; }
+  .edit { min-height: 40px; padding: 0; border: 0; background: none; color: var(--link); font-size: 14px; font-weight: 600; }
+  .trow { display: flex; align-items: center; gap: 12px; padding: 8px 0 2px; }
+  .trow .tx { flex: 1; display: grid; gap: 2px; min-width: 0; }
+  .trow .tt { font-size: 16px; font-weight: 700; }
+  .trow .ts { font-size: 13px; color: var(--hint); }
+  dl.sum { margin: 0; display: grid; grid-template-columns: 116px minmax(0, 1fr); column-gap: 12px; row-gap: 10px; padding: 6px 0; font-size: 15px; }
+  dl.sum dt { color: var(--hint); }
+  dl.sum dd { margin: 0; font-weight: 600; white-space: pre-line; overflow-wrap: anywhere; }
+  dl.sum .miss { color: var(--danger); font-weight: 500; }
+  .ccard { border-radius: 18px; background: var(--card); border: 1.5px solid var(--line); overflow: hidden; }
+  .ccard .ch { padding: 14px 16px 6px; }
+  .ccard h2 { margin: 0; font-size: 16px; font-weight: 700; }
+  .check { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 16px; }
+  .check + .check { border-top: 1px solid var(--line); }
+  .check input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--accent); }
 
   /* done */
-  .done { display: grid; justify-items: center; gap: 10px; padding: 36px 8px 8px; text-align: center; }
-  .done .badge { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-text);
-    animation: pop .45s cubic-bezier(.2, 1.4, .4, 1) both; }
-  .done h2 { margin: 6px 0 0; font-size: 22px; font-weight: 700; }
-  .done p { margin: 0; color: var(--hint); font-size: 15px; max-width: 360px; }
-  .btn { width: 100%; border-radius: var(--r); padding: 14px; font-weight: 600; font-size: 17px; background: var(--accent); color: var(--accent-text); }
-  .btn.plain { background: var(--card); color: var(--link); }
-  .actions { width: 100%; display: grid; gap: 8px; margin-top: 12px; }
-  #fallbackSend { position: fixed; left: 16px; right: 16px; bottom: calc(12px + env(safe-area-inset-bottom)); width: auto; max-width: 568px; margin: 0 auto; z-index: 10;
-    box-shadow: 0 6px 20px rgb(0 0 0 / .18); }
+  .done { display: grid; justify-items: center; gap: 12px; padding-top: 24px; text-align: center; }
+  .big { width: 76px; height: 76px; border-radius: 50%; background: var(--accent); color: var(--accent-text); display: grid; place-items: center;
+    box-shadow: 0 10px 28px color-mix(in srgb, var(--accent) 30%, transparent); animation: pop .45s cubic-bezier(.2, 1.4, .4, 1) both; }
+  .done h1 { margin-top: 6px; font-size: 26px; }
+  .receipt, .next { width: 100%; text-align: left; border-radius: 20px; background: var(--card); border: 1.5px solid var(--line); padding: 16px; }
+  .rtop { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .lbl { font-size: 12px; font-weight: 600; color: var(--hint); letter-spacing: .04em; text-transform: uppercase; }
+  .num { font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
+  .status { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 12px; border-radius: 999px; background: var(--amber-bg);
+    color: var(--amber-text); font-size: 13px; font-weight: 700; white-space: nowrap; }
+  .rgrid { margin: 14px 0 0; padding-top: 14px; border-top: 1px dashed var(--line); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .rgrid dd { margin: 3px 0 0; font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+  .next h2 { margin: 0 0 12px; font-size: 16px; font-weight: 700; }
+  .next ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+  .next li { display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--hint); }
+  .next li:first-child { color: var(--text); font-weight: 600; }
+  .next .n { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--fill); font-size: 13px; font-weight: 700; color: var(--hint); }
+  .next li:first-child .n { background: var(--accent); color: var(--accent-text); }
+  .actions { width: 100%; display: grid; gap: 10px; margin-top: 8px; }
+  .btn { width: 100%; min-height: 54px; border-radius: 999px; border: 0; background: var(--accent); color: var(--accent-text); font-size: 17px; font-weight: 700; }
+  .btn.secondary { background: var(--card); color: var(--text); border: 1.5px solid var(--line); font-weight: 600; }
+  #fallbackSend { position: fixed; left: 20px; right: 20px; bottom: calc(16px + env(safe-area-inset-bottom)); width: auto; max-width: 520px; margin: 0 auto; z-index: 10;
+    box-shadow: 0 8px 24px rgb(0 0 0 / .18); }
 
-  @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .enter { animation: enter .22s ease both; }
+  @keyframes enter { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: none; } }
   @keyframes pop { from { opacity: 0; transform: scale(.5); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
 <main id="app">
-  <div class="top">
-    <div class="avatar" id="avatar" aria-hidden="true">✓</div>
-    <div>
-      <h1 id="title">Новая заявка</h1>
-      <div class="who" id="who">Загрузка…</div>
-    </div>
-  </div>
+  <button class="back" id="back" type="button" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>Назад</button>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+  <div class="alert info" id="fix" hidden></div>
   <div class="alert error" id="error" role="alert" hidden></div>
-  <div class="alert" id="fix" hidden></div>
-  <section class="group" id="picker" hidden>
-    <div class="group-h">Что нужно от DevOps / SRE</div>
-    <div class="launcher" id="types"></div>
-  </section>
-  <div id="form" hidden></div>
-  <section id="done" class="done" hidden></section>
+  <div class="head" id="head">
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1 id="title">Новая заявка</h1>
+    <p class="sub" id="sub">Загрузка…</p>
+  </div>
+  <div id="step"></div>
+  <section class="done" id="done" hidden></section>
 </main>
-<div class="back" id="sheetBack" hidden></div>
-<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
-  <div class="grab"></div>
-  <div class="sheet-h"><b id="sheetTitle"></b><button type="button" id="sheetDone">Готово</button></div>
-  <label class="search" id="sheetSearchBox">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-    <input type="search" id="sheetSearch" placeholder="Поиск или своё значение" autocomplete="off" aria-label="Поиск">
-  </label>
-  <div class="sheet-list" id="sheetList"></div>
-</div>
-<button class="btn" id="fallbackSend" type="button" hidden>Отправить заявку</button>
+<button class="btn" id="fallbackSend" type="button" hidden>Далее</button>
 <script>
 (() => {
   const tg = window.Telegram && window.Telegram.WebApp;
   const initData = tg ? tg.initData : "";
+  const nativeBack = !!(tg && tg.BackButton && (!tg.isVersionAtLeast || tg.isVersionAtLeast("6.1")));
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
   const el = (tag, cls, html) => {
@@ -305,35 +318,57 @@
     }
     return e;
   };
-  const CHEVRON = "<svg class='chev' width='8' height='14' viewBox='0 0 8 14' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='m1 1 6 6-6 6'/></svg>";
-  const CHECK = "<svg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M5 12.5 10 17.5 19 7'/></svg>";
-  const CATEGORY = {db: "DB", env: "ENV", files: "OTHER"};
-  // the request types by colour, like app icons
-  const GRADIENT = {
-    DEPLOY: "linear-gradient(160deg, #7c7ff7, #5b4fe0)", HOTFIX: "linear-gradient(160deg, #ff9f43, #ff3b30)",
-    ROLLBACK: "linear-gradient(160deg, #8e9aaf, #5a6478)", INFRA: "linear-gradient(160deg, #34d1bf, #0f9d76)",
-    ACCESS: "linear-gradient(160deg, #ffd23f, #f59f00)", INCIDENT: "linear-gradient(160deg, #ff6b8b, #e0245e)",
-    MOBILE: "linear-gradient(160deg, #5ac8fa, #1e7cf2)", ANNOUNCE: "linear-gradient(160deg, #d77bf5, #9b3fe0)",
-    OTHER: "linear-gradient(160deg, #b8b8be, #8a8a93)"
+  const svg = (paths, size, width) => "<svg width='" + size + "' height='" + size + "' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='"
+    + (width || 1.8) + "' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'>" + paths + "</svg>";
+  const ICON = {
+    DEPLOY: "<circle cx='12' cy='12' r='9'/><path d='M12 16V8M8.5 11.5 12 8l3.5 3.5'/>",
+    HOTFIX: "<path d='M12 3c1.2 3.2 5 4.8 5 9.5a5 5 0 0 1-10 0c0-2 .8-3.4 2-4.5.2 1.6 1 2.6 2.2 2.6 0-3-.6-5.2.8-7.6Z'/>",
+    ROLLBACK: "<path d='M4 5v5h5'/><path d='M5.2 14.5A7.5 7.5 0 1 0 6.3 7.3L4 10'/>",
+    INFRA: "<rect x='4' y='4' width='16' height='6' rx='2'/><rect x='4' y='14' width='16' height='6' rx='2'/><path d='M8 7h.01M8 17h.01'/>",
+    ACCESS: "<circle cx='8' cy='15' r='4'/><path d='m10.8 12.2 7.7-7.7M16 7l2 2M13.5 9.5 15 11'/>",
+    INCIDENT: "<path d='M12 4 2.8 19.5h18.4Z'/><path d='M12 10v4M12 17h.01'/>",
+    MOBILE: "<rect x='7' y='3' width='10' height='18' rx='2.5'/><path d='M11 17.5h2'/>",
+    ANNOUNCE: "<path d='M4 10v4h3l7 4V6l-7 4Z'/><path d='M18 9.5a3.5 3.5 0 0 1 0 5'/>",
+    OTHER: "<path d='M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z'/><path d='M14 3v5h5M9 13h6M9 17h4'/>",
+    check: "<path d='M5 12.5 10 17.5 19 7'/>",
+    x: "<path d='M6 6l12 12M18 6 6 18'/>",
+    plus: "<path d='M12 5v14M5 12h14'/>",
+    search: "<circle cx='11' cy='11' r='6.5'/><path d='m20 20-4.2-4.2'/>",
+    merge: "<circle cx='6' cy='6' r='2.5'/><circle cx='6' cy='18' r='2.5'/><circle cx='18' cy='15' r='2.5'/><path d='M6 8.5v7M6 8.5c0 4 4 6.5 9.5 6.5'/>",
+    clip: "<path d='m20 11.5-7.8 7.8a5 5 0 0 1-7-7l8.2-8.2a3.4 3.4 0 0 1 4.8 4.8l-8.2 8.1a1.7 1.7 0 0 1-2.4-2.4l7.5-7.5'/>",
+    db: "<ellipse cx='12' cy='6' rx='7' ry='3'/><path d='M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3'/>",
+    env: "<path d='M4 7h10M18 7h2M4 17h4M12 17h8'/><circle cx='16' cy='7' r='2'/><circle cx='10' cy='17' r='2'/>",
+    lock: "<rect x='5' y='11' width='14' height='9' rx='2'/><path d='M8 11V8a4 4 0 0 1 8 0v3'/>",
+    clock: "<circle cx='12' cy='12' r='9'/><path d='M12 7v5l3 2'/>"
   };
-  const MAIN = ["project", "repo", "kind", "text", "combo", "choice", "multi", "date", "time", "links"];
+  // each type's colour: icon strokes, tinted squares
+  const COLOR = {DEPLOY: "#5468e8", HOTFIX: "#e0612b", ROLLBACK: "#6b7891", INFRA: "#1f9c76", ACCESS: "#c98a0c", INCIDENT: "#d93a5b",
+    MOBILE: "#2b86d9", ANNOUNCE: "#9454d6", OTHER: "#85857c"};
+  const WHERE = ["project", "repo", "kind"];
+  const FILES = {db: "DB", env: "ENV", files: "OTHER"};
+  const SECRET = /(PASS|SECRET|TOKEN|PWD|PRIVATE|API_?KEY|_KEY$)/i;
+  const WHERE_TITLE = {INFRA: "Для какого проекта?", INCIDENT: "Где сломалось?", ANNOUNCE: "Что объявляем?"};
+  const DETAILS_TITLE = {DEPLOY: "Что выкатываем?", HOTFIX: "Что выкатываем?", ROLLBACK: "Что откатываем?", INFRA: "Что нужно сделать?",
+    ACCESS: "Какой доступ нужен?", INCIDENT: "Что случилось?", MOBILE: "Какая сборка?", ANNOUNCE: "Детали объявления", OTHER: "Что нужно сделать?"};
 
-  let form = null, type = null, fixOf = null, sending = false, locked = false, finished = false;
-  let values = {};
-  let toggles = {};
-  let confirmed = new Set();
+  let form = null, type = null, fixOf = null, locked = false, sending = false, finished = false;
+  let steps = [], step = 0, query = "";
+  let values = {}, toggles = {}, confirmed = new Set();
   const files = {DB: [], ENV: [], OTHER: []};
+  const customRepo = {on: false};
 
-  function haptic() {
+  function haptic(kind) {
     try {
-      tg && tg.HapticFeedback && tg.HapticFeedback.selectionChanged();
+      if (tg && tg.HapticFeedback) {
+        kind ? tg.HapticFeedback.notificationOccurred(kind) : tg.HapticFeedback.selectionChanged();
+      }
     } catch (e) { /* no haptics here */ }
   }
 
   if (tg) {
-    tg.ready();
-    tg.expand();
     try {
+      tg.ready();
+      tg.expand();
       tg.setHeaderColor && tg.setHeaderColor("secondary_bg_color");
       tg.setBackgroundColor && tg.setBackgroundColor("secondary_bg_color");
     } catch (e) { /* older clients */ }
@@ -381,9 +416,9 @@
     } else {
       delete values[key];
     }
-    const cell = document.querySelector("[data-key='" + CSS.escape(key) + "']");
-    if (cell) {
-      cell.classList.remove("invalid");
+    const field = document.querySelector("[data-key='" + CSS.escape(key) + "']");
+    if (field) {
+      field.classList.remove("invalid");
     }
     saveDraft();
   }
@@ -392,41 +427,38 @@
 
   async function load() {
     if (!initData) {
-      $("who").textContent = "Откройте форму из Telegram — кнопкой «📝 Подать заявку» в канале.";
+      $("sub").textContent = "Откройте форму из Telegram — кнопкой «📝 Подать заявку» в канале.";
       return;
     }
     let res;
     try {
       res = await fetch("/miniapp/api/form", {headers: {"X-Telegram-Init-Data": initData}});
     } catch (e) {
-      $("who").textContent = "";
+      $("sub").textContent = "";
       fail("Сервер заявок недоступен — проверьте связь и откройте форму снова.");
       return;
     }
     const body = await res.json().catch(() => ({}));
     if (!res.ok) {
-      $("who").textContent = "";
+      $("sub").textContent = "";
       fail(body.error || "Форма не загрузилась — откройте её снова.");
       return;
     }
     form = body;
-    $("who").textContent = form.user + " · " + form.role;
-    const initial = (form.user || "").replace(/^@/, "").charAt(0).toUpperCase();
-    if (initial) {
-      $("avatar").textContent = initial;
-    }
-    renderLauncher();
     const start = tg && tg.initDataUnsafe ? tg.initDataUnsafe.start_param || "" : "";
     if (form.prefill) {
+      // a returned request, fixed under its number: its type stays
       fixOf = form.prefill.number;
       values = Object.assign({}, form.prefill.values || {});
       confirmed = new Set(form.prefill.confirmed || []);
+      type = form.types.find(t => t.code === form.prefill.type) || null;
+      locked = !!type;
       const box = $("fix");
-      box.innerHTML = "<span>✏️</span><span><b>Исправление " + esc(fixOf) + "</b>"
-        + (form.prefill.reason ? "<br>Причина возврата: " + esc(form.prefill.reason) : "")
-        + "<br><span class='hint'>Исправьте и отправьте — номер заявки сохранится.</span></span>";
+      box.innerHTML = "<b>Исправление " + esc(fixOf) + "</b>" + (form.prefill.reason ? "<p class='help'>Причина возврата: " + esc(form.prefill.reason) + "</p>" : "")
+        + "<p class='help'>Исправьте и отправьте — номер заявки сохранится.</p>";
       box.hidden = false;
-      choose(form.prefill.type, true);
+      step = 0;
+      render();
       return;
     }
     const draft = loadDraft();
@@ -434,156 +466,245 @@
       values = draft.values || {};
       toggles = draft.toggles || {};
       confirmed = new Set(draft.confirmed || []);
+      type = form.types.find(t => t.code === draft.type) || null;
     }
     if (start.startsWith("type_")) {
-      // «startapp=type_hotfix» from /hotfix in the private chat: that type, open
+      // «startapp=type_hotfix» from /hotfix in the private chat: that type, its first step
       const t = form.types.find(x => x.code.toLowerCase() === start.substring(5));
       if (t) {
-        choose(t.code, false);
-        return;
+        if (!type || type.code !== t.code) {
+          confirmed = new Set();
+        }
+        type = t;
       }
     }
-    if (draft && draft.type) {
-      choose(draft.type, false);
-    }
+    step = type ? 1 : 0;
+    render();
   }
 
-  function renderLauncher() {
-    $("picker").hidden = false;
-    const box = $("types");
+  // ---------------------------------------------------------------- steps
+
+  function computeSteps() {
+    const out = [];
+    if (!locked) {
+      out.push("type");
+    }
+    if (type) {
+      if (type.fields.some(f => WHERE.includes(f.kind))) {
+        out.push("where");
+      }
+      if (type.fields.some(f => !WHERE.includes(f.kind) && !FILES[f.kind])) {
+        out.push("details");
+      }
+      if (type.fields.some(f => FILES[f.kind])) {
+        out.push("files");
+      }
+      out.push("review");
+    }
+    steps = out;
+    step = Math.max(0, Math.min(step, steps.length - 1));
+  }
+
+  function fieldsOf(name) {
+    if (!type) {
+      return [];
+    }
+    if (name === "where") {
+      return type.fields.filter(f => WHERE.includes(f.kind));
+    }
+    if (name === "details") {
+      return type.fields.filter(f => !WHERE.includes(f.kind) && !FILES[f.kind]);
+    }
+    if (name === "files") {
+      return type.fields.filter(f => FILES[f.kind]);
+    }
+    return [];
+  }
+
+  // the key of the type's field of that kind («Проект», «Репозиторий», «Объявление»)
+  function keyOf(kind) {
+    const f = type && type.fields.find(x => x.kind === kind);
+    return f ? f.key : kind;
+  }
+
+  function context() {
+    return fieldsOf("where").map(f => values[f.key]).filter(Boolean).join(" · ");
+  }
+
+  function render() {
+    computeSteps();
+    const name = steps[step];
+    $("error").hidden = true;
+    const total = type ? steps.length : 5;
+    const progress = $("progress");
+    progress.innerHTML = "";
+    for (let i = 0; i < total; i++) {
+      progress.appendChild(el("span", i <= step ? "is-on" : ""));
+    }
+    const head = {
+      type: ["Что нужно от DevOps?", "Выберите тип — форма покажет только нужные поля."],
+      where: [WHERE_TITLE[type && type.code] || "Где выкатываем?", "Проект и репозиторий из реестра — или впишите свой."],
+      details: [DETAILS_TITLE[type && type.code] || "Детали", ""],
+      files: ["Файлы и настройки", "Их увидят только DevOps / SRE. Пароли не пишите — бот заменит их на ***."],
+      review: ["Проверьте заявку", "DevOps получат её ровно в таком виде."]
+    }[name];
+    const ctx = name === "details" || name === "files" ? context() : name === "where" ? type.title : "";
+    $("eyebrow").textContent = "Шаг " + (step + 1) + " из " + total + (ctx ? " · " + ctx : "");
+    $("title").textContent = head[0];
+    $("sub").textContent = head[1];
+    $("sub").hidden = !head[1];
+    const box = $("step");
     box.innerHTML = "";
-    form.types.forEach((t, i) => {
-      const b = el("button", "app type", "<span class='sq' style='--g:" + (GRADIENT[t.code] || GRADIENT.OTHER) + "' aria-hidden='true'>" + esc(t.emoji)
-        + "</span><span class='t'>" + esc(t.title) + "</span>");
-      b.type = "button";
-      b.dataset.code = t.code;
-      b.style.animationDelay = (i * 25) + "ms";
-      b.addEventListener("click", () => {
-        haptic();
-        choose(t.code, false);
-      });
-      box.appendChild(b);
-    });
-  }
-
-  function choose(code, lock) {
-    const t = form.types.find(x => x.code === code);
-    if (!t) {
-      return;
-    }
-    if (type && type.code !== code) {
-      confirmed = new Set();
-    }
-    type = t;
-    locked = lock;
-    $("picker").hidden = true;
-    renderForm();
-    showSend();
-    saveDraft();
+    box.className = "";
+    void box.offsetWidth;
+    box.className = "enter";
+    ({type: renderType, where: renderWhere, details: renderDetails, files: renderFiles, review: renderReview})[name](box);
+    box.querySelectorAll("textarea.input").forEach(grow);
+    updateButtons();
     window.scrollTo({top: 0});
   }
 
-  // ---------------------------------------------------------------- the form
-
-  function group(title, nodes, footer) {
-    const g = el("section", "group");
-    if (title) {
-      g.appendChild(el("div", "group-h", esc(title)));
-    }
-    const card = el("div", "card");
-    nodes.forEach(n => card.appendChild(n));
-    g.appendChild(card);
-    if (footer) {
-      g.appendChild(el("div", "group-f", esc(footer)));
-    }
-    return g;
+  function go(delta) {
+    step += delta;
+    render();
   }
 
-  function caption(f) {
-    return "<span class='cap'><span aria-hidden='true'>" + esc(f.icon) + "</span><span>" + esc(f.key) + "</span></span>";
+  function goTo(name) {
+    const i = steps.indexOf(name);
+    if (i >= 0) {
+      step = i;
+      render();
+    }
   }
 
-  function label(f) {
-    return "<span class='lb'><span class='ic' aria-hidden='true'>" + esc(f.icon) + "</span><span>" + esc(f.key) + "</span></span>";
+  // required fields of the step left empty: pointed at, and one confirm to go on anyway
+  async function next() {
+    const name = steps[step];
+    if (name === "review") {
+      send();
+      return;
+    }
+    const miss = fieldsOf(name).filter(f => f.required && !filled(f));
+    if (miss.length) {
+      miss.forEach(f => {
+        const node = document.querySelector("[data-key='" + CSS.escape(f.key) + "']");
+        if (node) {
+          node.classList.add("invalid");
+        }
+      });
+      const first = document.querySelector(".invalid");
+      if (first) {
+        first.scrollIntoView({block: "center", behavior: "smooth"});
+      }
+      if (!(await ask("Не заполнено: " + miss.map(f => f.key).join(", ") + ". Продолжить без этого?"))) {
+        return;
+      }
+    }
+    go(1);
   }
 
-  function renderForm() {
-    const box = $("form");
-    box.innerHTML = "";
-    box.style.display = "grid";
-    box.style.gap = "22px";
-    box.appendChild(group("Тип заявки", [typeCell()]));
-    const main = type.fields.filter(f => MAIN.includes(f.kind));
-    if (main.length) {
-      box.appendChild(group("Заявка", main.map(cellOf)));
-    }
-    const notes = type.fields.filter(f => f.kind === "note");
-    if (notes.length) {
-      box.appendChild(group("Подробности", notes.map(cellOf)));
-    }
-    const changes = type.fields.filter(f => CATEGORY[f.kind]);
-    if (changes.length) {
-      box.appendChild(group("Изменения и файлы", changes.map(cellOf),
-        "Пароли и токены не пишите — бот заменит значения на ***; файлы увидят только DevOps / SRE."));
-    }
-    if ((type.confirmations || []).length) {
-      box.appendChild(group("Готовность", type.confirmations.map(checkCell), "Отметьте, что уже сделано — DevOps увидят это в карточке."));
-    }
-    box.hidden = false;
-    box.querySelectorAll("textarea").forEach(grow);
+  function ask(text) {
+    return new Promise(resolve => {
+      if (tg && tg.showConfirm && (!tg.isVersionAtLeast || tg.isVersionAtLeast("6.2"))) {
+        tg.showConfirm(text, ok => resolve(ok));
+      } else {
+        resolve(window.confirm(text));
+      }
+    });
   }
 
-  function typeCell() {
-    const cell = el(locked ? "div" : "button", "cell row type-row",
-      "<span class='sq sm' style='--g:" + (GRADIENT[type.code] || GRADIENT.OTHER) + "' aria-hidden='true'>" + esc(type.emoji) + "</span>"
-      + "<span class='grow'><div class='tt'>" + esc(type.title) + "</div>" + (type.who ? "<div class='ts'>" + esc(type.who) + "</div>" : "") + "</span>"
-      + (locked ? "" : "<span class='change'>Изменить " + CHEVRON + "</span>"));
-    if (!locked) {
-      cell.type = "button";
-      cell.addEventListener("click", () => openSheet({
-        title: "Тип заявки", value: type.code, search: false,
-        options: form.types.map(t => ({value: t.code, label: t.emoji + " " + t.title, sub: t.who})),
-        onPick: v => choose(v, false)
-      }));
+  function back() {
+    if (step > 0 && !finished) {
+      go(-1);
     }
-    return cell;
   }
 
-  function cellOf(f) {
-    switch (f.kind) {
-      case "project":
-      case "repo":
-      case "kind":
-        return pickCell(f);
-      case "choice":
-        return choiceCell(f);
-      case "multi":
-        return multiCell(f);
-      case "date":
-      case "time":
-        return whenCell(f);
-      case "links":
-        return linksCell(f);
-      case "note":
-        return noteCell(f);
-      case "db":
-        return dbCell(f);
-      case "env":
-        return envCell(f);
-      case "files":
-        return filesCell(f);
-      default:
-        return textCell(f);
+  function updateButtons() {
+    const name = steps[step];
+    const label = name === "review" ? (fixOf ? "Отправить исправление" : "Отправить заявку") : "Далее";
+    const showMain = !finished && name && name !== "type";
+    if (tg && tg.MainButton) {
+      tg.MainButton.setText(label);
+      showMain ? tg.MainButton.show() : tg.MainButton.hide();
+    } else {
+      $("fallbackSend").textContent = label;
+      $("fallbackSend").hidden = !showMain;
+    }
+    const canBack = step > 0 && !finished;
+    if (nativeBack) {
+      canBack ? tg.BackButton.show() : tg.BackButton.hide();
+    } else {
+      $("back").hidden = !canBack;
     }
   }
+
+  // ---------------------------------------------------------------- step 1: the type
+
+  function renderType(box) {
+    const grid = el("div", "types");
+    form.types.forEach((t, i) => {
+      const wide = i === form.types.length - 1 && form.types.length % 2 === 1;
+      const who = t.who ? t.who.charAt(0).toUpperCase() + t.who.slice(1) : "";
+      const b = el("button", "tcard type" + (wide ? " wide" : ""),
+        "<span class='badge'>" + svg(ICON.check, 14, 3) + "</span>"
+        + "<span class='ico' style='--c:" + (COLOR[t.code] || COLOR.OTHER) + "'>" + svg(ICON[t.code] || ICON.OTHER, 22) + "</span>"
+        + "<span class='tx'><span class='tname'>" + esc(t.title) + "</span>" + (who ? "<span class='twho'>" + esc(who) + "</span>" : "") + "</span>");
+      b.type = "button";
+      b.dataset.code = t.code;
+      b.setAttribute("aria-pressed", String(!!type && type.code === t.code));
+      b.addEventListener("click", () => {
+        if (!type || type.code !== t.code) {
+          confirmed = new Set();
+        }
+        type = t;
+        grid.querySelectorAll(".tcard").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+        haptic();
+        saveDraft();
+        setTimeout(() => go(1), 160);
+      });
+      grid.appendChild(b);
+    });
+    box.appendChild(grid);
+  }
+
+  // ---------------------------------------------------------------- shared field parts
+
+  function fieldBox(f, forId) {
+    const wrap = el("div", "field");
+    wrap.dataset.key = f.key;
+    const lab = el(forId ? "label" : "div", "flabel", "<span>" + esc(f.key) + "</span>" + (f.required ? "" : "<span class='opt'>необязательно</span>"));
+    if (forId) {
+      lab.htmlFor = forId;
+    }
+    wrap.appendChild(lab);
+    return wrap;
+  }
+
+  function help(text) {
+    return el("p", "help", esc(text));
+  }
+
+  function filled(f) {
+    if (FILES[f.kind]) {
+      return !!(values[f.key] || "").trim() || files[FILES[f.kind]].length > 0;
+    }
+    return !!(values[f.key] || "").trim();
+  }
+
+  function grow(t) {
+    t.style.height = "auto";
+    t.style.height = Math.max(t.scrollHeight + 3, 92) + "px";
+  }
+
+  // ---------------------------------------------------------------- step 2: project, repository, announcement kind
 
   function projectNames() {
     const out = [];
     (form.projects || []).forEach(p => {
       if ((p.streams || []).length > 1) {
-        p.streams.forEach(s => out.push(p.name + " " + s.name));
+        p.streams.forEach(s => out.push({name: p.name + " " + s.name, repos: (s.repos || []).length}));
       } else {
-        out.push(p.name);
+        out.push({name: p.name, repos: (p.streams || []).reduce((n, s) => n + (s.repos || []).length, 0)});
       }
     });
     return out;
@@ -593,101 +714,283 @@
     const v = (project || "").trim().toLowerCase();
     const out = [];
     (form.projects || []).forEach(p => (p.streams || []).forEach(s => {
-      if (!v || v === p.name.toLowerCase() || v === (p.name + " " + s.name).toLowerCase() || v === (s.code || "").toLowerCase()) {
+      if (v && (v === p.name.toLowerCase() || v === (p.name + " " + s.name).toLowerCase() || v === (s.code || "").toLowerCase())) {
         (s.repos || []).forEach(r => out.includes(r) || out.push(r));
       }
     }));
     return out;
   }
 
-  // a value picked from a list (the registry's projects and repositories, the announcement kinds), or typed
-  function pickCell(f) {
-    const cell = el("button", "cell row");
-    cell.type = "button";
-    cell.dataset.key = f.key;
-    const draw = () => {
-      const v = values[f.key] || "";
-      cell.innerHTML = label(f) + "<span class='val" + (v ? " on" : "") + "'>" + esc(v || (f.required ? "Выбрать" : "Не указан")) + "</span>" + CHEVRON;
-    };
-    draw();
-    cell.addEventListener("click", () => {
-      const list = f.kind === "project" ? projectNames() : f.kind === "repo" ? reposOf(values["Проект"]) : (form.announcementKinds || []);
-      openSheet({
-        title: f.key, value: values[f.key], custom: f.kind !== "kind", clear: !f.required && !!values[f.key],
-        options: list.map(o => ({value: o, label: o})),
-        onPick: v => {
-          set(f.key, v);
-          draw();
-          if (f.kind === "project") {
-            // the repository belongs to the project
-            const repo = document.querySelector("[data-key='Репозиторий']");
-            if (repo && values["Репозиторий"] && !reposOf(v).includes(values["Репозиторий"]) && reposOf(v).length) {
-              set("Репозиторий", "");
-              repo.replaceWith(pickCell(type.fields.find(x => x.kind === "repo")));
-            }
-          }
-        }
-      });
-    });
-    return cell;
+  function plural(n) {
+    const m10 = n % 10, m100 = n % 100;
+    return n + (m10 === 1 && m100 !== 11 ? " репозиторий" : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? " репозитория" : " репозиториев");
   }
 
-  function textCell(f) {
-    const cell = el("label", "cell stack", caption(f));
-    cell.dataset.key = f.key;
+  function renderWhere(box) {
+    const list = el("div", "fields");
+    fieldsOf("where").forEach(f => list.appendChild(f.kind === "project" ? projectField(f) : f.kind === "repo" ? repoField(f) : kindField(f)));
+    box.appendChild(list);
+  }
+
+  function radioRow(name, sub, checked, onPick, cls) {
+    const b = el("button", "row" + (cls ? " " + cls : ""), (cls === "custom" ? svg(ICON.plus, 20, 2.2) : "<span class='radio'></span>")
+      + "<span class='tx'><span class='nm'>" + esc(name) + "</span>" + (sub ? "<span class='ds'>" + esc(sub) + "</span>" : "") + "</span>");
+    b.type = "button";
+    b.setAttribute("role", "radio");
+    b.setAttribute("aria-checked", String(!!checked));
+    b.addEventListener("click", () => {
+      haptic();
+      onPick();
+    });
+    return b;
+  }
+
+  function projectField(f) {
+    const wrap = fieldBox(f, "f-search");
+    const all = projectNames();
+    const search = el("div", "search", svg(ICON.search, 20));
     const input = el("input");
-    input.type = "text";
+    input.id = "f-search";
+    input.type = "search";
+    input.autocomplete = "off";
+    input.placeholder = all.length ? "Найти или вписать свой" : (f.sample ? "Например: " + f.sample : "Название проекта");
+    input.value = query;
+    search.appendChild(input);
+    wrap.appendChild(search);
+    const list = el("div", "list");
+    wrap.appendChild(list);
+    const pick = name => {
+      set(f.key, name);
+      query = "";
+      const repoKey = keyOf("repo");
+      if (values[repoKey] && !reposOf(name).includes(values[repoKey]) && reposOf(name).length) {
+        set(repoKey, "");
+        customRepo.on = false;
+      }
+      render();
+    };
+    const draw = () => {
+      list.innerHTML = "";
+      const q = input.value.trim().toLowerCase();
+      const shown = all.filter(p => !q || p.name.toLowerCase().includes(q));
+      const current = values[f.key];
+      if (current && !all.some(p => p.name === current)) {
+        list.appendChild(radioRow(current, "своё название", true, () => {}));
+      }
+      shown.forEach(p => list.appendChild(radioRow(p.name, plural(p.repos), p.name === current, () => pick(p.name))));
+      if (q && !all.some(p => p.name.toLowerCase() === q)) {
+        list.appendChild(radioRow("Использовать «" + input.value.trim() + "»", "", false, () => pick(input.value.trim()), "custom"));
+      }
+      list.hidden = !list.children.length;
+    };
+    input.addEventListener("input", () => {
+      query = input.value;
+      draw();
+    });
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter" && input.value.trim()) {
+        pick(input.value.trim());
+      }
+    });
+    draw();
+    return wrap;
+  }
+
+  function repoField(f) {
+    const repos = reposOf(values[keyOf("project")]);
+    const current = values[f.key] || "";
+    const typed = !!current && !repos.includes(current);
+    const wrap = fieldBox(f, repos.length && !customRepo.on && !typed ? null : "f-repo");
+    if (repos.length) {
+      const chips = el("div", "chips");
+      repos.forEach(r => {
+        const c = el("button", "chip", (r === current ? svg(ICON.check, 16, 2.6) : "") + esc(r));
+        c.type = "button";
+        c.setAttribute("aria-pressed", String(r === current));
+        c.addEventListener("click", () => {
+          set(f.key, r === current ? "" : r);
+          customRepo.on = false;
+          haptic();
+          render();
+        });
+        chips.appendChild(c);
+      });
+      const more = el("button", "chip more", svg(ICON.plus, 16, 2.2) + "Другой");
+      more.type = "button";
+      more.setAttribute("aria-pressed", String(customRepo.on || typed));
+      more.addEventListener("click", () => {
+        customRepo.on = true;
+        if (repos.includes(current)) {
+          set(f.key, "");
+        }
+        render();
+        setTimeout(() => $("f-repo") && $("f-repo").focus(), 50);
+      });
+      chips.appendChild(more);
+      wrap.appendChild(chips);
+    }
+    if (!repos.length || customRepo.on || typed) {
+      const input = el("input", "input");
+      input.id = "f-repo";
+      input.autocomplete = "off";
+      input.autocapitalize = "off";
+      input.value = typed ? current : "";
+      input.placeholder = f.sample ? "Например: " + f.sample : "Название репозитория";
+      input.addEventListener("input", () => set(f.key, input.value));
+      wrap.appendChild(input);
+    }
+    if (f.hint) {
+      wrap.appendChild(help(f.hint));
+    }
+    return wrap;
+  }
+
+  function kindField(f) {
+    const wrap = fieldBox(f, null);
+    const list = el("div", "list");
+    (form.announcementKinds || []).forEach(k => list.appendChild(radioRow(k, "", values[f.key] === k, () => {
+      set(f.key, k);
+      render();
+    })));
+    wrap.appendChild(list);
+    return wrap;
+  }
+
+  // ---------------------------------------------------------------- step 3: details
+
+  function renderDetails(box) {
+    const list = el("div", "fields");
+    fieldsOf("details").forEach((f, i) => list.appendChild(detailField(f, "f-d" + i)));
+    box.appendChild(list);
+  }
+
+  function detailField(f, id) {
+    switch (f.kind) {
+      case "links":
+        return linksField(f, id);
+      case "note":
+        return noteField(f, id);
+      case "choice":
+        return choiceField(f);
+      case "multi":
+        return multiField(f);
+      case "date":
+      case "time":
+        return whenField(f, id);
+      default:
+        return textField(f, id);
+    }
+  }
+
+  function textField(f, id) {
+    const wrap = fieldBox(f, id);
+    const input = el("input", "input");
+    input.id = id;
     input.autocomplete = "off";
     input.value = values[f.key] || "";
-    input.placeholder = f.sample || f.hint || "";
+    input.placeholder = f.sample ? "Например: " + f.sample : "";
     if (f.kind === "combo" && (f.options || []).length) {
-      const id = "dl_" + type.fields.indexOf(f);
-      let list = document.getElementById(id);
-      if (!list) {
-        list = el("datalist");
-        list.id = id;
-        document.body.appendChild(list);
-      }
+      const list = el("datalist");
+      list.id = id + "-list";
       list.innerHTML = f.options.map(o => "<option value='" + esc(o) + "'>").join("");
-      input.setAttribute("list", id);
+      wrap.appendChild(list);
+      input.setAttribute("list", list.id);
     }
     input.addEventListener("input", () => set(f.key, input.value));
-    cell.appendChild(input);
-    return cell;
+    wrap.appendChild(input);
+    if (f.hint && f.hint !== f.key) {
+      wrap.appendChild(help(f.hint));
+    }
+    return wrap;
   }
 
-  function grow(t) {
-    t.style.height = "auto";
-    t.style.height = t.scrollHeight + "px";
-  }
-
-  function noteCell(f) {
-    const cell = el("label", "cell stack", caption(f));
-    cell.dataset.key = f.key;
-    const t = el("textarea");
-    t.rows = 1;
+  function noteField(f, id) {
+    const wrap = fieldBox(f, id);
+    const t = el("textarea", "input");
+    t.id = id;
+    t.rows = 3;
     t.value = values[f.key] || "";
-    t.placeholder = f.hint || f.sample || "";
+    t.placeholder = f.sample ? "Например: " + f.sample : "";
     t.addEventListener("input", () => {
       grow(t);
       set(f.key, t.value);
     });
-    cell.appendChild(t);
-    return cell;
+    wrap.appendChild(t);
+    if (f.hint && f.hint !== f.key) {
+      wrap.appendChild(help(f.hint));
+    }
+    return wrap;
+  }
+
+  // one or more links: a line each, «Ещё …»
+  function linksField(f, id) {
+    const wrap = fieldBox(f, id);
+    let items = String(values[f.key] || "").split(/\s*\n\s*/).filter(Boolean);
+    if (!items.length) {
+      items = [""];
+    }
+    const lines = el("div", "fields");
+    lines.style.gap = "8px";
+    wrap.appendChild(lines);
+    const sync = () => set(f.key, items.map(s => s.trim()).filter(Boolean).join("\n"));
+    const draw = focusLast => {
+      lines.innerHTML = "";
+      items.forEach((v, i) => {
+        const row = el("div", "inrow", svg(ICON.merge, 18));
+        const input = el("input");
+        if (i === 0) {
+          input.id = id;
+        }
+        input.inputMode = "url";
+        input.autocomplete = "off";
+        input.autocapitalize = "off";
+        input.value = v;
+        input.placeholder = i ? "Ещё ссылка" : (f.sample ? "Например: " + f.sample : "");
+        input.setAttribute("aria-label", f.key + " " + (i + 1));
+        input.addEventListener("input", () => {
+          items[i] = input.value;
+          sync();
+        });
+        row.appendChild(input);
+        if (items.length > 1) {
+          const x = el("button", "x", svg(ICON.x, 14, 2.4));
+          x.type = "button";
+          x.setAttribute("aria-label", "Убрать ссылку");
+          x.addEventListener("click", () => {
+            items.splice(i, 1);
+            sync();
+            draw(false);
+          });
+          row.appendChild(x);
+        }
+        lines.appendChild(row);
+        if (focusLast && i === items.length - 1) {
+          setTimeout(() => input.focus(), 0);
+        }
+      });
+    };
+    draw(false);
+    const add = el("button", "add", svg(ICON.plus, 18, 2.2) + (f.key === "MR" ? "Ещё MR" : "Ещё ссылка"));
+    add.type = "button";
+    add.addEventListener("click", () => {
+      items.push("");
+      draw(true);
+    });
+    wrap.appendChild(add);
+    return wrap;
   }
 
   // one of a few: a segmented control
-  function choiceCell(f) {
-    const cell = el("div", "cell row", label(f));
-    cell.dataset.key = f.key;
-    const seg = el("div", "seg");
-    seg.setAttribute("role", "group");
-    seg.setAttribute("aria-label", f.key);
+  function choiceField(f) {
     const current = (f.options || []).find(o => o.toLowerCase() === String(values[f.key] || "").trim().toLowerCase());
     if (values[f.key] && !current) {
       // a value outside the choices (an older request): kept as typed
-      return textCell(f);
+      return textField(f, "f-" + f.options.join(""));
     }
+    const wrap = fieldBox(f, null);
+    const seg = el("div", "seg");
+    seg.setAttribute("role", "group");
+    seg.setAttribute("aria-label", f.key);
     (f.options || []).forEach(o => {
       const b = el("button", null, esc(o));
       b.type = "button";
@@ -700,14 +1003,16 @@
       });
       seg.appendChild(b);
     });
-    cell.appendChild(seg);
-    return cell;
+    wrap.appendChild(seg);
+    if (f.hint) {
+      wrap.appendChild(help(f.hint));
+    }
+    return wrap;
   }
 
   // several of a few: toggle chips
-  function multiCell(f) {
-    const cell = el("div", "cell row", label(f));
-    cell.dataset.key = f.key;
+  function multiField(f) {
+    const wrap = fieldBox(f, null);
     const picked = new Set(String(values[f.key] || "").split(/[,;\s]+/).map(x => x.toLowerCase()).filter(Boolean));
     const chips = el("div", "chips");
     (f.options || []).forEach(o => {
@@ -721,107 +1026,28 @@
       });
       chips.appendChild(b);
     });
-    cell.appendChild(chips);
-    return cell;
+    wrap.appendChild(chips);
+    return wrap;
   }
 
   // a date or a time: the phone's own picker
-  function whenCell(f) {
+  function whenField(f, id) {
     const v = values[f.key] || "";
     const fits = f.kind === "date" ? /^\d{4}-\d{2}-\d{2}$/ : /^\d{2}:\d{2}$/;
     if (v && !fits.test(v)) {
-      return textCell(f);
+      return textField(f, id);
     }
-    const cell = el("label", "cell row", label(f));
-    cell.dataset.key = f.key;
-    const input = el("input", "inline-input");
+    const wrap = fieldBox(f, id);
+    const input = el("input", "input");
+    input.id = id;
     input.type = f.kind;
     input.value = v;
     input.addEventListener("input", () => set(f.key, input.value));
-    cell.appendChild(input);
-    return cell;
+    wrap.appendChild(input);
+    return wrap;
   }
 
-  // one or more links: a line each, «+ Ещё ссылка»
-  function linksCell(f) {
-    const cell = el("div", "cell");
-    cell.dataset.key = f.key;
-    const cap = el("div", "stack", caption(f));
-    cap.style.paddingBottom = "0";
-    cell.appendChild(cap);
-    const lines = el("div", "lines");
-    cell.appendChild(lines);
-    let items = String(values[f.key] || "").split(/\s*\n\s*/).filter(Boolean);
-    if (!items.length) {
-      items = [""];
-    }
-    const sync = () => set(f.key, items.map(s => s.trim()).filter(Boolean).join("\n"));
-    const draw = focusLast => {
-      lines.innerHTML = "";
-      items.forEach((v, i) => {
-        const line = el("div", "line");
-        const input = el("input");
-        input.type = "text";
-        input.inputMode = "url";
-        input.autocomplete = "off";
-        input.autocapitalize = "off";
-        input.value = v;
-        input.placeholder = i ? "Ещё ссылка" : (f.sample || f.hint || "");
-        input.setAttribute("aria-label", f.key + " " + (i + 1));
-        input.addEventListener("input", () => {
-          items[i] = input.value;
-          sync();
-        });
-        line.appendChild(input);
-        if (items.length > 1) {
-          const x = el("button", "x", "✕");
-          x.type = "button";
-          x.setAttribute("aria-label", "Убрать ссылку");
-          x.addEventListener("click", () => {
-            items.splice(i, 1);
-            sync();
-            draw(false);
-          });
-          line.appendChild(x);
-        }
-        lines.appendChild(line);
-        if (focusLast && i === items.length - 1) {
-          setTimeout(() => input.focus(), 0);
-        }
-      });
-      const add = el("button", "line add tap", "<span class='plus' aria-hidden='true'>+</span><span>Ещё ссылка</span>");
-      add.type = "button";
-      add.addEventListener("click", () => {
-        items.push("");
-        draw(true);
-      });
-      lines.appendChild(add);
-    };
-    draw(false);
-    return cell;
-  }
-
-  // a switch row; when on, its lines show under it
-  function switchHead(f, on, onChange) {
-    const head = el("div", "row", label(f));
-    const sw = el("button", "switch");
-    sw.type = "button";
-    sw.setAttribute("role", "switch");
-    sw.setAttribute("aria-checked", String(on));
-    sw.setAttribute("aria-label", f.key);
-    sw.addEventListener("click", () => {
-      const next = sw.getAttribute("aria-checked") !== "true";
-      sw.setAttribute("aria-checked", String(next));
-      haptic();
-      onChange(next);
-    });
-    head.appendChild(sw);
-    return head;
-  }
-
-  function isOn(f) {
-    return toggles[f.key] !== undefined ? toggles[f.key] : !!(values[f.key] || files[CATEGORY[f.kind]].length);
-  }
+  // ---------------------------------------------------------------- step 4: files and env
 
   // «🗄 Изменения БД — Liquibase changelog, SQL» describes the field of that name: only what follows the name
   function hintOf(f) {
@@ -829,298 +1055,303 @@
     return parts.length > 1 && parts[0].includes(f.key) ? parts.slice(1).join(" — ") : "";
   }
 
-  function dbCell(f) {
-    const cell = el("div", "cell");
-    cell.dataset.key = f.key;
-    const body = el("div", "lines");
-    const t = el("textarea");
-    t.rows = 1;
-    t.value = values[f.key] || "";
-    t.placeholder = "Ссылка на MR или SQL текстом";
-    t.addEventListener("input", () => {
-      grow(t);
-      set(f.key, t.value);
-    });
-    const text = el("label", "line");
-    text.appendChild(t);
-    t.style.cssText = "width:100%;border:0;outline:0;background:transparent;resize:none;padding:4px 0;font-size:16px;overflow:hidden";
-    body.appendChild(text);
-    fileLines(body, CATEGORY[f.kind], hintOf(f));
-    const on = isOn(f);
-    body.hidden = !on;
-    cell.appendChild(switchHead(f, on, next => {
-      toggles[f.key] = next;
-      body.hidden = !next;
-      saveDraft();
-      if (next) {
-        grow(t);
-      }
-    }));
-    cell.appendChild(body);
-    return cell;
-  }
-
-  // KEY=VALUE lines as two inputs each; lines that are no variable (a file's name) are kept as they are
-  function envCell(f) {
-    const cell = el("div", "cell");
-    cell.dataset.key = f.key;
-    const body = el("div", "lines");
-    const all = String(values[f.key] || "").split(/\n/).map(s => s.trim()).filter(Boolean);
-    const rows = all.filter(s => /^[^=\s]+\s*=/.test(s)).map(s => ({k: s.split("=")[0].trim(), v: s.substring(s.indexOf("=") + 1).trim()}));
-    const extra = all.filter(s => !/^[^=\s]+\s*=/.test(s));
-    if (!rows.length) {
-      rows.push({k: "", v: ""});
+  function isOn(f) {
+    if (f.kind === "files") {
+      return true;
     }
-    const sync = () => set(f.key, rows.filter(r => r.k.trim()).map(r => r.k.trim() + "=" + r.v.trim()).concat(extra).join("\n"));
-    const list = el("div");
-    const draw = focusLast => {
-      list.innerHTML = "";
-      rows.forEach((r, i) => {
-        const line = el("div", "line kv");
-        const k = el("input");
-        k.placeholder = "KEY";
-        k.value = r.k;
-        k.autocapitalize = "characters";
-        k.autocomplete = "off";
-        k.spellcheck = false;
-        k.style.flex = "1 1 40%";
-        k.setAttribute("aria-label", "Переменная " + (i + 1));
-        const v = el("input");
-        v.placeholder = "значение или ***";
-        v.value = r.v;
-        v.autocapitalize = "off";
-        v.autocomplete = "off";
-        v.spellcheck = false;
-        v.style.flex = "1 1 60%";
-        v.setAttribute("aria-label", "Значение " + (i + 1));
-        k.addEventListener("input", () => {
-          r.k = k.value;
-          sync();
-        });
-        v.addEventListener("input", () => {
-          r.v = v.value;
-          sync();
-        });
-        line.appendChild(k);
-        line.appendChild(el("span", "eq", "="));
-        line.appendChild(v);
-        if (rows.length > 1) {
-          const x = el("button", "x", "✕");
-          x.type = "button";
-          x.setAttribute("aria-label", "Убрать переменную");
-          x.addEventListener("click", () => {
-            rows.splice(i, 1);
-            sync();
-            draw(false);
-          });
-          line.appendChild(x);
-        }
-        list.appendChild(line);
-        if (focusLast && i === rows.length - 1) {
-          setTimeout(() => k.focus(), 0);
-        }
-      });
-      const add = el("button", "line add tap", "<span class='plus' aria-hidden='true'>+</span><span>Переменная</span>");
-      add.type = "button";
-      add.addEventListener("click", () => {
-        rows.push({k: "", v: ""});
-        draw(true);
-      });
-      list.appendChild(add);
-    };
-    draw(false);
-    body.appendChild(list);
-    fileLines(body, CATEGORY[f.kind], hintOf(f) || "env-файл");
-    const on = isOn(f);
-    body.hidden = !on;
-    cell.appendChild(switchHead(f, on, next => {
-      toggles[f.key] = next;
-      body.hidden = !next;
-      saveDraft();
-    }));
-    cell.appendChild(body);
-    return cell;
+    return toggles[f.key] !== undefined ? toggles[f.key] : filled(f);
   }
 
-  function filesCell(f) {
-    const cell = el("div", "cell");
-    cell.dataset.key = f.key;
-    const head = el("div", "row", label(f));
-    cell.appendChild(head);
-    const body = el("div", "lines");
-    fileLines(body, CATEGORY[f.kind], hintOf(f));
-    cell.appendChild(body);
-    return cell;
+  function renderFiles(box) {
+    const cards = el("div", "cards");
+    fieldsOf("files").forEach(f => cards.appendChild(fileCard(f)));
+    box.appendChild(cards);
+  }
+
+  function fileCard(f) {
+    const category = FILES[f.kind];
+    const card = el("section", "fcard");
+    card.dataset.key = f.key;
+    const icon = f.kind === "db" ? ICON.db : f.kind === "env" ? ICON.env : ICON.clip;
+    const color = f.kind === "db" ? COLOR.DEPLOY : f.kind === "env" ? COLOR.INFRA : COLOR.OTHER;
+    const sub = hintOf(f) || (f.kind === "env" ? "KEY = значение или env-файл" : "");
+    const head = el("div", "fhead", "<span class='ico sm' style='--c:" + color + "'>" + svg(icon, 20) + "</span>"
+      + "<span class='tx'><span class='tt'>" + esc(f.key) + "</span>" + (sub ? "<span class='ts'>" + esc(sub) + "</span>" : "") + "</span>");
+    card.appendChild(head);
+    const body = el("div");
+    const picker = el("input");
+    picker.type = "file";
+    picker.multiple = true;
+    picker.hidden = true;
+    picker.addEventListener("change", () => {
+      Array.from(picker.files || []).forEach(file => files[category].push(file));
+      picker.value = "";
+      haptic();
+      render();
+    });
+    card.appendChild(picker);
+    if (f.kind === "files") {
+      const attach = el("button", "pill", "Приложить");
+      attach.type = "button";
+      attach.addEventListener("click", () => picker.click());
+      head.appendChild(attach);
+      files[category].forEach((file, i) => body.appendChild(fileRow(category, file, i)));
+      card.appendChild(body);
+      return card;
+    }
+    const on = isOn(f);
+    const sw = el("button", "switch");
+    sw.type = "button";
+    sw.setAttribute("role", "switch");
+    sw.setAttribute("aria-checked", String(on));
+    sw.setAttribute("aria-label", f.key);
+    sw.addEventListener("click", () => {
+      toggles[f.key] = !isOn(f);
+      haptic();
+      saveDraft();
+      render();
+    });
+    head.appendChild(sw);
+    if (!on) {
+      return card;
+    }
+    if (f.kind === "db") {
+      const text = el("div", "fbody");
+      const t = el("textarea", "input");
+      t.rows = 2;
+      t.value = values[f.key] || "";
+      t.placeholder = "Ссылка на MR или SQL текстом — или файлы ниже";
+      t.setAttribute("aria-label", f.key + " текстом");
+      t.style.minHeight = "50px";
+      t.addEventListener("input", () => {
+        t.style.height = "auto";
+        t.style.height = (t.scrollHeight + 3) + "px";
+        set(f.key, t.value);
+      });
+      text.appendChild(t);
+      body.appendChild(text);
+    } else {
+      body.appendChild(envEditor(f));
+    }
+    files[category].forEach((file, i) => body.appendChild(fileRow(category, file, i)));
+    const attach = el("button", "fbtn", svg(ICON.clip, 18, 1.9) + (f.kind === "env" ? "Приложить env-файл" : "Приложить файл"));
+    attach.type = "button";
+    attach.addEventListener("click", () => picker.click());
+    body.appendChild(attach);
+    card.appendChild(body);
+    return card;
   }
 
   function size(bytes) {
     return bytes < 1024 ? bytes + " Б" : bytes < 1048576 ? Math.round(bytes / 1024) + " КБ" : (bytes / 1048576).toFixed(1) + " МБ";
   }
 
-  function fileIcon(name) {
-    const ext = (name.split(".").pop() || "").toLowerCase();
-    return ["sql", "xml", "yaml", "yml"].includes(ext) ? "🗄" : ["env", "properties", "conf"].includes(ext) ? "⚙️"
-      : ["png", "jpg", "jpeg", "gif", "webp", "heic"].includes(ext) ? "🖼" : ["log", "txt"].includes(ext) ? "📄" : "📎";
+  function fileRow(category, file, i) {
+    const row = el("div", "frow", "<span class='nm'>" + esc(file.name) + "</span><span class='sz'>" + size(file.size) + "</span>");
+    const x = el("button", "x", svg(ICON.x, 13, 2.4));
+    x.type = "button";
+    x.setAttribute("aria-label", "Убрать " + file.name);
+    x.addEventListener("click", () => {
+      files[category].splice(i, 1);
+      render();
+    });
+    row.appendChild(x);
+    return row;
   }
 
-  // the files of a category, one line each, and «Приложить файл»
-  function fileLines(box, category, hint) {
-    const list = el("div");
-    const picker = el("input");
-    picker.type = "file";
-    picker.multiple = true;
-    picker.hidden = true;
-    const add = el("button", "line add tap", "<span class='plus' aria-hidden='true'>+</span><span>Приложить файл</span>"
-      + (hint ? "<span class='s'>" + esc(hint) + "</span>" : ""));
-    add.type = "button";
-    add.addEventListener("click", () => picker.click());
-    picker.addEventListener("change", () => {
-      Array.from(picker.files || []).forEach(file => files[category].push(file));
-      picker.value = "";
-      draw();
-      haptic();
-    });
-    function draw() {
+  // KEY = value rows; a secret-looking key goes as *** (its value is passed through Vault); lines that are no variable are kept
+  function envEditor(f) {
+    const box = el("div", "fbody");
+    const all = String(values[f.key] || "").split(/\n/).map(s => s.trim()).filter(Boolean);
+    const isVar = s => /^[^=\s]+\s*=/.test(s);
+    const rows = all.filter(isVar).map(s => ({k: s.split("=")[0].trim(), v: s.substring(s.indexOf("=") + 1).trim()}));
+    const extra = all.filter(s => !isVar(s));
+    if (!rows.length) {
+      rows.push({k: "", v: ""});
+    }
+    const sync = () => set(f.key, rows.filter(r => r.k.trim())
+      .map(r => r.k.trim() + "=" + (SECRET.test(r.k) ? "***" : r.v.trim())).concat(extra).join("\n"));
+    const list = el("div", "fields");
+    list.style.gap = "8px";
+    const draw = focusLast => {
       list.innerHTML = "";
-      files[category].forEach((file, i) => {
-        const line = el("div", "line file", "<span class='fi' aria-hidden='true'>" + fileIcon(file.name) + "</span><span class='nm'>" + esc(file.name)
-          + "</span><span class='sz'>" + size(file.size) + "</span>");
-        const x = el("button", "x", "✕");
+      rows.forEach((r, i) => {
+        const line = el("div", "kv");
+        const k = el("input");
+        k.placeholder = "KEY";
+        k.value = r.k;
+        k.autocapitalize = "characters";
+        k.autocomplete = "off";
+        k.spellcheck = false;
+        k.setAttribute("aria-label", "Переменная " + (i + 1));
+        line.appendChild(k);
+        const value = () => {
+          if (SECRET.test(r.k)) {
+            return el("div", "secret", svg(ICON.lock, 14, 2) + "*** через Vault");
+          }
+          const v = el("input");
+          v.placeholder = "значение";
+          v.value = r.v;
+          v.autocapitalize = "off";
+          v.autocomplete = "off";
+          v.spellcheck = false;
+          v.setAttribute("aria-label", "Значение " + (i + 1));
+          v.addEventListener("input", () => {
+            r.v = v.value;
+            sync();
+          });
+          return v;
+        };
+        let cell = value();
+        line.appendChild(cell);
+        k.addEventListener("input", () => {
+          const was = SECRET.test(r.k);
+          r.k = k.value;
+          if (was !== SECRET.test(r.k)) {
+            const fresh = value();
+            line.replaceChild(fresh, cell);
+            cell = fresh;
+          }
+          sync();
+        });
+        const x = el("button", "x", svg(ICON.x, 13, 2.4));
         x.type = "button";
-        x.setAttribute("aria-label", "Убрать " + file.name);
+        x.setAttribute("aria-label", "Убрать переменную");
         x.addEventListener("click", () => {
-          files[category].splice(i, 1);
-          draw();
+          rows.splice(i, 1);
+          if (!rows.length) {
+            rows.push({k: "", v: ""});
+          }
+          sync();
+          draw(false);
         });
         line.appendChild(x);
         list.appendChild(line);
+        if (focusLast && i === rows.length - 1) {
+          setTimeout(() => k.focus(), 0);
+        }
       });
-    }
-    draw();
+    };
+    draw(false);
     box.appendChild(list);
-    box.appendChild(add);
-    box.appendChild(picker);
-  }
-
-  function checkCell(text, i) {
-    const cell = el("button", "cell row", "<span class='tick' aria-hidden='true'>" + CHECK + "</span><span class='grow'>" + esc(text) + "</span>");
-    cell.type = "button";
-    cell.setAttribute("role", "checkbox");
-    cell.setAttribute("aria-checked", String(confirmed.has(i)));
-    cell.addEventListener("click", () => {
-      if (confirmed.has(i)) {
-        confirmed.delete(i);
-      } else {
-        confirmed.add(i);
-      }
-      cell.setAttribute("aria-checked", String(confirmed.has(i)));
-      haptic();
-      saveDraft();
+    const add = el("button", "add", svg(ICON.plus, 18, 2.2) + "Переменная");
+    add.type = "button";
+    add.addEventListener("click", () => {
+      rows.push({k: "", v: ""});
+      draw(true);
     });
-    return cell;
+    box.appendChild(add);
+    return box;
   }
 
-  // ---------------------------------------------------------------- the bottom sheet
+  // ---------------------------------------------------------------- step 5: review
 
-  let closeSheet = null;
-
-  function openSheet(o) {
-    const sheet = $("sheet"), back = $("sheetBack"), list = $("sheetList"), search = $("sheetSearch");
-    $("sheetTitle").textContent = o.title;
-    search.value = "";
-    $("sheetSearchBox").hidden = o.search === false || (!o.custom && o.options.length < 8);
-    search.placeholder = o.custom ? "Поиск или своё значение" : "Поиск";
-    const draw = () => {
-      const q = search.value.trim();
-      const lq = q.toLowerCase();
-      list.innerHTML = "";
-      const shown = o.options.filter(x => !lq || x.label.toLowerCase().includes(lq) || (x.sub || "").toLowerCase().includes(lq));
-      if (o.custom && q && !o.options.some(x => x.label.toLowerCase() === lq)) {
-        shown.unshift({value: q, label: "Использовать «" + q + "»", custom: true});
-      }
-      if (o.clear && !q) {
-        shown.push({value: "", label: "Не указывать", muted: true});
-      }
-      shown.forEach(x => {
-        const b = el("button", "opt" + (x.custom ? " custom" : "") + (x.muted ? " muted" : ""),
-          "<span class='ol'><span>" + esc(x.label) + "</span>" + (x.sub ? "<span class='os'>" + esc(x.sub) + "</span>" : "") + "</span>"
-          + (!x.custom && !x.muted && x.value === o.value ? "<span class='ok'>" + CHECK.replace("width='13' height='13'", "width='18' height='18'") + "</span>" : ""));
-        b.type = "button";
-        b.addEventListener("click", () => {
-          close();
-          haptic();
-          o.onPick(x.value);
-        });
-        list.appendChild(b);
+  function renderReview(box) {
+    const stack = el("div", "stack");
+    // the type and where it goes
+    const top = el("section", "rcard");
+    const whereMissing = fieldsOf("where").filter(f => f.required && !filled(f)).map(f => f.key);
+    top.appendChild(el("div", "trow", "<span class='ico sm' style='--c:" + (COLOR[type.code] || COLOR.OTHER) + "'>" + svg(ICON[type.code] || ICON.OTHER, 20) + "</span>"
+      + "<span class='tx'><span class='tt'>" + esc(type.title) + "</span><span class='ts'"
+      + (whereMissing.length ? " style='color:var(--danger)'>Не указано: " + esc(whereMissing.join(", ")) : ">" + esc(context() || "без проекта")) + "</span></span>"));
+    const editTop = editButton(steps.includes("where") ? "where" : "type");
+    if (editTop) {
+      top.querySelector(".trow").appendChild(editTop);
+    }
+    stack.appendChild(top);
+    if (steps.includes("details")) {
+      const card = el("section", "rcard");
+      card.appendChild(sectionHead("Детали", "details"));
+      const dl = el("dl", "sum");
+      fieldsOf("details").forEach(f => {
+        const v = (values[f.key] || "").trim();
+        if (v) {
+          dl.appendChild(el("dt", null, esc(f.key)));
+          dl.appendChild(el("dd", null, esc(v)));
+        } else if (f.required) {
+          dl.appendChild(el("dt", null, esc(f.key)));
+          dl.appendChild(el("dd", "miss", "Не заполнено"));
+        }
       });
-      if (!shown.length) {
-        list.appendChild(el("div", "empty", o.custom ? "Введите название в поиске — оно и будет значением" : "Ничего не найдено"));
+      if (!dl.children.length) {
+        dl.appendChild(el("dd", "miss", "Ничего не заполнено"));
       }
-    };
-    const close = () => {
-      back.classList.remove("on");
-      sheet.classList.remove("on");
-      setTimeout(() => {
-        sheet.hidden = true;
-        back.hidden = true;
-      }, 220);
-      if (tg && tg.BackButton) {
-        tg.BackButton.offClick(close);
-        tg.BackButton.hide();
+      card.appendChild(dl);
+      stack.appendChild(card);
+    }
+    if (steps.includes("files")) {
+      const card = el("section", "rcard");
+      card.appendChild(sectionHead("Файлы и env", "files"));
+      const dl = el("dl", "sum");
+      fieldsOf("files").filter(isOn).forEach(f => {
+        const parts = [];
+        const names = files[FILES[f.kind]].map(x => x.name);
+        if (f.kind === "env") {
+          const keys = String(values[f.key] || "").split("\n").filter(s => /=/.test(s)).map(s => s.split("=")[0].trim() + (SECRET.test(s.split("=")[0]) ? " (скрыт)" : ""));
+          if (keys.length) {
+            parts.push(keys.join(", "));
+          }
+        } else if ((values[f.key] || "").trim()) {
+          parts.push(f.kind === "db" ? "текстом: " + values[f.key].trim() : values[f.key].trim());
+        }
+        if (names.length) {
+          parts.push(names.join(", "));
+        }
+        if (parts.length) {
+          dl.appendChild(el("dt", null, esc(f.key)));
+          dl.appendChild(el("dd", null, esc(parts.join("\n"))));
+        }
+      });
+      if (!dl.children.length) {
+        dl.appendChild(el("dd", null, "Без файлов и переменных"));
+        dl.lastChild.style.gridColumn = "1 / -1";
+        dl.lastChild.style.fontWeight = "500";
+        dl.lastChild.style.color = "var(--hint)";
       }
-      closeSheet = null;
-      showSend();
-    };
-    search.oninput = draw;
-    search.onkeydown = e => {
-      if (e.key === "Enter" && o.custom && search.value.trim()) {
-        close();
-        o.onPick(search.value.trim());
-      }
-    };
-    draw();
-    back.hidden = false;
-    sheet.hidden = false;
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      back.classList.add("on");
-      sheet.classList.add("on");
-    }));
-    back.onclick = close;
-    $("sheetDone").onclick = close;
-    closeSheet = close;
-    if (tg && tg.BackButton) {
-      tg.BackButton.onClick(close);
-      tg.BackButton.show();
+      card.appendChild(dl);
+      stack.appendChild(card);
     }
-    if (tg && tg.MainButton) {
-      tg.MainButton.hide();
+    if ((type.confirmations || []).length) {
+      const card = el("section", "ccard", "<div class='ch'><h2>Перед отправкой</h2><p class='help'>Отметки увидят DevOps в карточке заявки.</p></div>");
+      type.confirmations.forEach((text, i) => {
+        const row = el("label", "check");
+        const box = el("input");
+        box.type = "checkbox";
+        box.checked = confirmed.has(i);
+        box.addEventListener("change", () => {
+          box.checked ? confirmed.add(i) : confirmed.delete(i);
+          haptic();
+          saveDraft();
+        });
+        row.appendChild(box);
+        row.appendChild(el("span", null, esc(text.charAt(0).toUpperCase() + text.slice(1))));
+        card.appendChild(row);
+      });
+      stack.appendChild(card);
     }
-    if (o.custom && !o.options.length) {
-      setTimeout(() => search.focus(), 250);
-    }
+    box.appendChild(stack);
   }
 
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && closeSheet) {
-      closeSheet();
+  function sectionHead(title, target) {
+    const head = el("div", "rhead", "<h2>" + esc(title) + "</h2>");
+    const edit = editButton(target);
+    if (edit) {
+      head.appendChild(edit);
     }
-  });
+    return head;
+  }
+
+  function editButton(target) {
+    if (!steps.includes(target)) {
+      return null;
+    }
+    const b = el("button", "edit", "Изменить");
+    b.type = "button";
+    b.addEventListener("click", () => goTo(target));
+    return b;
+  }
 
   // ---------------------------------------------------------------- sending
-
-  function showSend() {
-    if (!type || finished) {
-      return;
-    }
-    const text = fixOf ? "Отправить исправление" : "Отправить заявку";
-    if (tg && tg.MainButton) {
-      tg.MainButton.setText(text);
-      tg.MainButton.show();
-    } else {
-      $("fallbackSend").textContent = text;
-      $("fallbackSend").hidden = false;
-    }
-  }
 
   // a field switched off is not sent, nor its files
   function active(f) {
@@ -1129,13 +1360,8 @@
 
   function sentFiles() {
     const out = {DB: [], ENV: [], OTHER: []};
-    type.fields.filter(f => CATEGORY[f.kind] && active(f)).forEach(f => out[CATEGORY[f.kind]] = files[CATEGORY[f.kind]]);
+    type.fields.filter(f => FILES[f.kind] && active(f)).forEach(f => out[FILES[f.kind]] = files[FILES[f.kind]]);
     return out;
-  }
-
-  function missing() {
-    const sent = sentFiles();
-    return type.fields.filter(f => f.required && !(values[f.key] || "").trim() && !(CATEGORY[f.kind] && sent[CATEGORY[f.kind]].length));
   }
 
   // The server's limits, checked here: a larger upload is cut off on the way and would fail with no explanation.
@@ -1157,33 +1383,8 @@
     return null;
   }
 
-  function confirmMissing(list) {
-    return new Promise(resolve => {
-      if (!list.length) {
-        resolve(true);
-        return;
-      }
-      list.forEach(f => {
-        const cell = document.querySelector("[data-key='" + CSS.escape(f.key) + "']");
-        if (cell) {
-          cell.classList.add("invalid");
-        }
-      });
-      const first = document.querySelector(".invalid");
-      if (first) {
-        first.scrollIntoView({block: "center", behavior: "smooth"});
-      }
-      const text = "Не заполнено: " + list.map(f => f.key).join(", ") + ". Отправить всё равно?";
-      if (tg && tg.showConfirm) {
-        tg.showConfirm(text, ok => resolve(ok));
-      } else {
-        resolve(window.confirm(text));
-      }
-    });
-  }
-
   async function send() {
-    if (!type || sending || closeSheet) {
+    if (!type || sending) {
       return;
     }
     const tooLarge = oversize();
@@ -1191,7 +1392,8 @@
       fail(tooLarge);
       return;
     }
-    if (!(await confirmMissing(missing()))) {
+    const miss = type.fields.filter(f => f.required && active(f) && !filled(f)).map(f => f.key);
+    if (miss.length && !(await ask("Не заполнено: " + miss.join(", ") + ". Отправить всё равно?"))) {
       return;
     }
     sending = true;
@@ -1217,7 +1419,7 @@
         return;
       }
       clearDraft();
-      done(body);
+      done(body, Object.values(sent).reduce((n, list) => n + list.length, 0));
     } catch (e) {
       fail("Сервер заявок недоступен — заявка не отправлена, попробуйте ещё раз.");
     } finally {
@@ -1228,43 +1430,53 @@
     }
   }
 
-  function done(result) {
+  function done(result, fileCount) {
     finished = true;
-    ["form", "picker", "fix", "error", "fallbackSend"].forEach(id => $(id).hidden = true);
-    $("title").textContent = "Готово";
-    if (tg && tg.MainButton) {
-      tg.MainButton.hide();
-    }
-    try {
-      tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred("success");
-    } catch (e) { /* no haptics here */ }
+    ["back", "progress", "fix", "error", "head", "step", "fallbackSend"].forEach(id => $(id).hidden = true);
+    updateButtons();
+    haptic("success");
+    const when = new Date().toLocaleString("ru-RU", {day: "numeric", month: "long", hour: "2-digit", minute: "2-digit"});
+    const prod = type.code === "DEPLOY" || type.code === "HOTFIX";
+    const nextSteps = type.code === "ANNOUNCE" ? ["Публикация в канале в назначенное время"]
+      : ["DevOps примет заявку", prod ? "Выкатка на прод" : "Выполнение", prod ? "Проверка после выкатки" : "Готово — бот напишет в личку"];
     const box = $("done");
-    box.innerHTML = "<div class='badge'>" + CHECK.replace("width='13' height='13'", "width='36' height='36'") + "</div>"
-      + "<h2>" + esc(result.number) + " отправлена</h2>"
-      + "<p>Заявка — постом в канале, статус и вопросы — в комментариях к нему. Новости по ней бот пришлёт в личку.</p>"
-      + (result.hidden && result.hidden.length ? "<p>🔒 Скрыто (***): " + esc(result.hidden.join(", ")) + "</p>" : "")
-      + (result.failedFiles && result.failedFiles.length ? "<div class='alert error'>⚠️ Не переданы файлы: " + esc(result.failedFiles.join(", "))
-        + " — пришлите их кнопкой «📎 Прикрепить файлы» в личке с ботом.</div>" : "");
+    box.innerHTML = "<div class='big'>" + svg(ICON.check, 38, 2.6) + "</div>"
+      + "<h1>" + (fixOf ? "Исправление отправлено" : "Заявка отправлена") + "</h1>"
+      + "<p class='sub' style='max-width:320px'>Новости по ней бот пришлёт в личку, вопросы — в комментариях к посту.</p>"
+      + "<section class='receipt'><div class='rtop'><span style='display:grid;gap:2px'><span class='lbl'>Номер</span><span class='num'>" + esc(result.number) + "</span></span>"
+      + "<span class='status'>" + svg(ICON.clock, 14, 2.2) + "Ждёт DevOps</span></div>"
+      + "<dl class='rgrid'><div><dt class='lbl'>Тип</dt><dd>" + esc(type.title) + "</dd></div>"
+      + "<div><dt class='lbl'>Отправлена</dt><dd>" + esc(when) + "</dd></div>"
+      + (values[keyOf("project")] ? "<div><dt class='lbl'>Проект</dt><dd>" + esc(values[keyOf("project")]) + "</dd></div>" : "")
+      + "<div><dt class='lbl'>Файлы</dt><dd>" + (fileCount ? fileCount + " у DevOps" : "нет") + "</dd></div></dl></section>"
+      + (result.hidden && result.hidden.length ? "<p class='help'>Скрыто (***): " + esc(result.hidden.join(", ")) + " — значения передайте через Vault.</p>" : "")
+      + (result.failedFiles && result.failedFiles.length ? "<div class='alert error'>Не переданы файлы: " + esc(result.failedFiles.join(", "))
+        + " — пришлите их кнопкой «📎 Прикрепить файлы» в личке с ботом.</div>" : "")
+      + "<section class='next'><h2>Что дальше</h2><ol>" + nextSteps.map((s, i) => "<li><span class='n'>" + (i + 1) + "</span>" + esc(s) + "</li>").join("") + "</ol></section>";
     const actions = el("div", "actions");
     if (result.postUrl) {
-      const open = el("button", "btn", "Открыть пост заявки");
+      const open = el("button", "btn", "Открыть пост в канале");
       open.type = "button";
       open.addEventListener("click", () => tg && tg.openTelegramLink ? tg.openTelegramLink(result.postUrl) : window.open(result.postUrl));
       actions.appendChild(open);
     }
-    const close = el("button", "btn plain", "Закрыть");
-    close.type = "button";
-    close.addEventListener("click", () => tg ? tg.close() : window.close());
-    actions.appendChild(close);
+    const again = el("button", "btn secondary", "Закрыть");
+    again.type = "button";
+    again.addEventListener("click", () => tg && tg.close ? tg.close() : window.close());
+    actions.appendChild(again);
     box.appendChild(actions);
     box.hidden = false;
     window.scrollTo({top: 0});
   }
 
   if (tg && tg.MainButton) {
-    tg.MainButton.onClick(send);
+    tg.MainButton.onClick(next);
   }
-  $("fallbackSend").addEventListener("click", send);
+  if (nativeBack) {
+    tg.BackButton.onClick(back);
+  }
+  $("fallbackSend").addEventListener("click", next);
+  $("back").addEventListener("click", back);
   load();
 })();
 </script>

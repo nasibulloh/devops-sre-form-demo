@@ -69,10 +69,12 @@
     document.head.appendChild(style);
     const main = document.getElementById("app");
     const banner = document.createElement("div");
-    banner.className = "alert";
+    banner.className = "alert info";
     banner.innerHTML = "<span>🧪</span><span><b>Демо-версия.</b> Проекты вымышленные, заявка никуда не отправляется — "
       + "в конце видно, что ушло бы DevOps.</span>";
-    main.insertBefore(banner, main.children[1]);
+    banner.style.marginTop = "0";
+    banner.style.marginBottom = "12px";
+    main.insertBefore(banner, main.firstChild);
     const done = document.getElementById("done");
     new MutationObserver(() => {
       if (!done.hidden && last && !done.querySelector(".demo-sent")) {
