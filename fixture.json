@@ -1,0 +1,724 @@
+{
+ "user": "@demo_user",
+ "role": "участник",
+ "types": [
+  {
+   "code": "DEPLOY",
+   "title": "Деплой релиза",
+   "emoji": "🛫",
+   "who": "РМ направления, в день релиза к 14:00",
+   "fields": [
+    {
+     "key": "Проект",
+     "icon": "📁",
+     "kind": "project",
+     "required": true,
+     "hint": "Из списка или любое другое название",
+     "sample": "Payments Backend",
+     "options": []
+    },
+    {
+     "key": "Репозиторий",
+     "icon": "📦",
+     "kind": "repo",
+     "required": false,
+     "hint": "Один репозиторий проекта; тогда MR можно указать номером (!214)",
+     "sample": "payments-api",
+     "options": []
+    },
+    {
+     "key": "Релиз",
+     "icon": "🏷",
+     "kind": "text",
+     "required": true,
+     "hint": "Версия релиза (Fix Version)",
+     "sample": "1.3.0",
+     "options": []
+    },
+    {
+     "key": "MR",
+     "icon": "🔗",
+     "kind": "links",
+     "required": true,
+     "hint": "Ссылки на merge request — по одной в строке",
+     "sample": "!214",
+     "options": []
+    },
+    {
+     "key": "Pipeline",
+     "icon": "🧪",
+     "kind": "text",
+     "required": false,
+     "hint": "Пайплайн сборки релиза",
+     "sample": "#88123",
+     "options": []
+    },
+    {
+     "key": "SHA",
+     "icon": "🔖",
+     "kind": "text",
+     "required": false,
+     "hint": "SHA образа из пайплайна",
+     "sample": "9f3c2ab",
+     "options": []
+    },
+    {
+     "key": "Изменения БД",
+     "icon": "🗄",
+     "kind": "db",
+     "required": false,
+     "hint": "🗄 Изменения БД — Liquibase changelog, SQL",
+     "sample": "V45__limits.sql, db.changelog-1.2.xml",
+     "options": []
+    },
+    {
+     "key": "Переменные окружения",
+     "icon": "⚙️",
+     "kind": "env",
+     "required": false,
+     "hint": "⚙️ Переменные окружения — .env, .properties",
+     "sample": "prod.env",
+     "options": []
+    },
+    {
+     "key": "Другое",
+     "icon": "📎",
+     "kind": "files",
+     "required": false,
+     "hint": "📎 Другое — логи, скриншоты, прочее",
+     "sample": "error.png, app.log",
+     "options": []
+    },
+    {
+     "key": "Описание",
+     "icon": "📝",
+     "kind": "note",
+     "required": false,
+     "hint": "Что ещё важно знать DevOps",
+     "sample": "Сначала деплой auth-service, потом gateway",
+     "options": []
+    }
+   ],
+   "confirmations": [
+    "MR влит в main",
+    "pipeline зелёный",
+    "изменения БД согласованы с DBA",
+    "план отката готов"
+   ]
+  },
+  {
+   "code": "HOTFIX",
+   "title": "Хотфикс",
+   "emoji": "🔥",
+   "who": "автор изменения, в любое время, с апрувом РМ",
+   "fields": [
+    {
+     "key": "Проект",
+     "icon": "📁",
+     "kind": "project",
+     "required": true,
+     "hint": "Из списка или любое другое название",
+     "sample": "Payments Backend",
+     "options": []
+    },
+    {
+     "key": "Репозиторий",
+     "icon": "📦",
+     "kind": "repo",
+     "required": false,
+     "hint": "Один репозиторий проекта; тогда MR можно указать номером (!214)",
+     "sample": "payments-api",
+     "options": []
+    },
+    {
+     "key": "MR",
+     "icon": "🔗",
+     "kind": "links",
+     "required": true,
+     "hint": "Ссылки на merge request — по одной в строке",
+     "sample": "!214",
+     "options": []
+    },
+    {
+     "key": "Задача",
+     "icon": "🎫",
+     "kind": "text",
+     "required": false,
+     "hint": "Задача в Jira",
+     "sample": "TASK-1024",
+     "options": []
+    },
+    {
+     "key": "Срочность",
+     "icon": "❗",
+     "kind": "note",
+     "required": false,
+     "hint": "Почему нельзя ждать планового релиза",
+     "sample": "платежи падают у 3% клиентов",
+     "options": []
+    },
+    {
+     "key": "Апрув РМ",
+     "icon": "✅",
+     "kind": "text",
+     "required": false,
+     "hint": "Кто из РМ одобрил",
+     "sample": "@rm_backend",
+     "options": []
+    },
+    {
+     "key": "Изменения БД",
+     "icon": "🗄",
+     "kind": "db",
+     "required": false,
+     "hint": "🗄 Изменения БД — Liquibase changelog, SQL",
+     "sample": "V45__limits.sql, db.changelog-1.2.xml",
+     "options": []
+    },
+    {
+     "key": "Переменные окружения",
+     "icon": "⚙️",
+     "kind": "env",
+     "required": false,
+     "hint": "⚙️ Переменные окружения — .env, .properties",
+     "sample": "prod.env",
+     "options": []
+    },
+    {
+     "key": "Другое",
+     "icon": "📎",
+     "kind": "files",
+     "required": false,
+     "hint": "📎 Другое — логи, скриншоты, прочее",
+     "sample": "error.png, app.log",
+     "options": []
+    },
+    {
+     "key": "Описание",
+     "icon": "📝",
+     "kind": "note",
+     "required": false,
+     "hint": "Что ещё важно знать DevOps",
+     "sample": "Сначала деплой auth-service, потом gateway",
+     "options": []
+    }
+   ],
+   "confirmations": [
+    "MR влит в main",
+    "pipeline зелёный",
+    "апрув РМ получен"
+   ]
+  },
+  {
+   "code": "ROLLBACK",
+   "title": "Откат",
+   "emoji": "⏪",
+   "who": "РМ или дежурный, сразу при сбое",
+   "fields": [
+    {
+     "key": "Проект",
+     "icon": "📁",
+     "kind": "project",
+     "required": true,
+     "hint": "Из списка или любое другое название",
+     "sample": "Payments Backend",
+     "options": []
+    },
+    {
+     "key": "Репозиторий",
+     "icon": "📦",
+     "kind": "repo",
+     "required": false,
+     "hint": "Один репозиторий проекта; тогда MR можно указать номером (!214)",
+     "sample": "payments-api",
+     "options": []
+    },
+    {
+     "key": "Релиз",
+     "icon": "🏷",
+     "kind": "text",
+     "required": true,
+     "hint": "Версия релиза (Fix Version)",
+     "sample": "1.3.0",
+     "options": []
+    },
+    {
+     "key": "Симптом",
+     "icon": "🩺",
+     "kind": "note",
+     "required": true,
+     "hint": "Что сломалось и как это видно",
+     "sample": "500 на /payments с 14:10",
+     "options": []
+    },
+    {
+     "key": "Предыдущий SHA",
+     "icon": "⏪",
+     "kind": "text",
+     "required": true,
+     "hint": "SHA образа, на который откатываемся",
+     "sample": "a1b2c3d",
+     "options": []
+    },
+    {
+     "key": "Другое",
+     "icon": "📎",
+     "kind": "files",
+     "required": false,
+     "hint": "📎 Другое — логи, скриншоты, прочее",
+     "sample": "error.png, app.log",
+     "options": []
+    }
+   ],
+   "confirmations": []
+  },
+  {
+   "code": "INFRA",
+   "title": "Инфра-заявка",
+   "emoji": "🧩",
+   "who": "до отсечки приёма к релизу",
+   "fields": [
+    {
+     "key": "Проект",
+     "icon": "📁",
+     "kind": "project",
+     "required": true,
+     "hint": "Из списка или любое другое название",
+     "sample": "Payments Backend",
+     "options": []
+    },
+    {
+     "key": "Что нужно",
+     "icon": "🧩",
+     "kind": "note",
+     "required": true,
+     "hint": "Что сделать: секрет, ingress, топик Kafka, ресурсы, новый сервис…",
+     "sample": "Новый топик limits.events, 6 партиций",
+     "options": []
+    },
+    {
+     "key": "Переменные окружения",
+     "icon": "⚙️",
+     "kind": "env",
+     "required": false,
+     "hint": "⚙️ Переменные окружения — .env, .properties",
+     "sample": "prod.env",
+     "options": []
+    },
+    {
+     "key": "К какому релизу",
+     "icon": "🏷",
+     "kind": "text",
+     "required": false,
+     "hint": "Релиз, к которому это нужно",
+     "sample": "1.3.0",
+     "options": []
+    },
+    {
+     "key": "Другое",
+     "icon": "📎",
+     "kind": "files",
+     "required": false,
+     "hint": "📎 Другое — логи, скриншоты, прочее",
+     "sample": "error.png, app.log",
+     "options": []
+    }
+   ],
+   "confirmations": []
+  },
+  {
+   "code": "ACCESS",
+   "title": "Доступ",
+   "emoji": "🔑",
+   "who": "с апрувом тимлида",
+   "fields": [
+    {
+     "key": "Система",
+     "icon": "🖥",
+     "kind": "text",
+     "required": true,
+     "hint": "Система",
+     "sample": "Grafana",
+     "options": []
+    },
+    {
+     "key": "Роль",
+     "icon": "👤",
+     "kind": "combo",
+     "required": true,
+     "hint": "Роль / уровень доступа",
+     "sample": "Viewer",
+     "options": [
+      "Viewer",
+      "Editor",
+      "Admin"
+     ]
+    },
+    {
+     "key": "Срок",
+     "icon": "📅",
+     "kind": "date",
+     "required": true,
+     "hint": "До какого числа",
+     "sample": "2026-12-31",
+     "options": []
+    },
+    {
+     "key": "Обоснование",
+     "icon": "💬",
+     "kind": "note",
+     "required": true,
+     "hint": "Зачем нужен доступ",
+     "sample": "Дежурство по релизам",
+     "options": []
+    },
+    {
+     "key": "Апрув тимлида",
+     "icon": "✅",
+     "kind": "text",
+     "required": false,
+     "hint": "Кто из тимлидов одобрил",
+     "sample": "@team_lead",
+     "options": []
+    }
+   ],
+   "confirmations": [
+    "апрув тимлида получен"
+   ]
+  },
+  {
+   "code": "INCIDENT",
+   "title": "Инцидент",
+   "emoji": "🚨",
+   "who": "автор изменения или дежурный, круглосуточно",
+   "fields": [
+    {
+     "key": "Проект",
+     "icon": "📁",
+     "kind": "project",
+     "required": true,
+     "hint": "Из списка или любое другое название",
+     "sample": "Payments Backend",
+     "options": []
+    },
+    {
+     "key": "Severity",
+     "icon": "🚦",
+     "kind": "choice",
+     "required": false,
+     "hint": "Sev1, Sev2 или Sev3",
+     "sample": "Sev2",
+     "options": [
+      "Sev1",
+      "Sev2",
+      "Sev3"
+     ]
+    },
+    {
+     "key": "Симптом",
+     "icon": "🩺",
+     "kind": "note",
+     "required": true,
+     "hint": "Что сломалось и как это видно",
+     "sample": "500 на /payments с 14:10",
+     "options": []
+    },
+    {
+     "key": "Влияние",
+     "icon": "💥",
+     "kind": "note",
+     "required": false,
+     "hint": "Кого и что затронуло",
+     "sample": "Платежи юрлиц, ~30% запросов",
+     "options": []
+    },
+    {
+     "key": "С какого времени",
+     "icon": "🕒",
+     "kind": "time",
+     "required": false,
+     "hint": "С какого времени",
+     "sample": "14:32",
+     "options": []
+    },
+    {
+     "key": "Связанный релиз",
+     "icon": "🏷",
+     "kind": "text",
+     "required": false,
+     "hint": "Релиз, после которого началось",
+     "sample": "1.2.1",
+     "options": []
+    },
+    {
+     "key": "Другое",
+     "icon": "📎",
+     "kind": "files",
+     "required": false,
+     "hint": "📎 Другое — логи, скриншоты, прочее",
+     "sample": "error.png, app.log",
+     "options": []
+    }
+   ],
+   "confirmations": []
+  },
+  {
+   "code": "MOBILE",
+   "title": "Мобильный релиз",
+   "emoji": "📱",
+   "who": "РМ мобилки, сабмит в магазины",
+   "fields": [
+    {
+     "key": "Проект",
+     "icon": "📁",
+     "kind": "project",
+     "required": true,
+     "hint": "Из списка или любое другое название",
+     "sample": "Payments Backend",
+     "options": []
+    },
+    {
+     "key": "Репозиторий",
+     "icon": "📦",
+     "kind": "repo",
+     "required": false,
+     "hint": "Один репозиторий проекта; тогда MR можно указать номером (!214)",
+     "sample": "payments-api",
+     "options": []
+    },
+    {
+     "key": "Релиз",
+     "icon": "🏷",
+     "kind": "text",
+     "required": true,
+     "hint": "Версия релиза (Fix Version)",
+     "sample": "1.3.0",
+     "options": []
+    },
+    {
+     "key": "Платформа",
+     "icon": "📱",
+     "kind": "multi",
+     "required": true,
+     "hint": "iOS, Android или обе",
+     "sample": "iOS, Android",
+     "options": [
+      "iOS",
+      "Android"
+     ]
+    },
+    {
+     "key": "MR",
+     "icon": "🔗",
+     "kind": "links",
+     "required": true,
+     "hint": "Ссылки на merge request — по одной в строке",
+     "sample": "!214",
+     "options": []
+    },
+    {
+     "key": "Сборка",
+     "icon": "📦",
+     "kind": "links",
+     "required": false,
+     "hint": "Ссылка на сборку (TestFlight, Firebase, артефакт)",
+     "sample": "https://appdistribution.firebase.dev/…",
+     "options": []
+    },
+    {
+     "key": "Другое",
+     "icon": "📎",
+     "kind": "files",
+     "required": false,
+     "hint": "📎 Другое — логи, скриншоты, прочее",
+     "sample": "error.png, app.log",
+     "options": []
+    },
+    {
+     "key": "Описание",
+     "icon": "📝",
+     "kind": "note",
+     "required": false,
+     "hint": "Что ещё важно знать DevOps",
+     "sample": "Сначала деплой auth-service, потом gateway",
+     "options": []
+    }
+   ],
+   "confirmations": [
+    "сборка прошла тестирование",
+    "release notes готовы"
+   ]
+  },
+  {
+   "code": "ANNOUNCE",
+   "title": "Объявление РМ",
+   "emoji": "📣",
+   "who": "РМ: открытие приёма, отсечка, последний день…",
+   "fields": [
+    {
+     "key": "Проект",
+     "icon": "📁",
+     "kind": "project",
+     "required": true,
+     "hint": "Из списка или любое другое название",
+     "sample": "Payments Backend",
+     "options": []
+    },
+    {
+     "key": "Объявление",
+     "icon": "📣",
+     "kind": "kind",
+     "required": false,
+     "hint": "Вид объявления",
+     "sample": "Отсечка",
+     "options": []
+    },
+    {
+     "key": "Релиз",
+     "icon": "🏷",
+     "kind": "text",
+     "required": true,
+     "hint": "Версия релиза (Fix Version)",
+     "sample": "1.3.0",
+     "options": []
+    },
+    {
+     "key": "Комментарий",
+     "icon": "💬",
+     "kind": "note",
+     "required": false,
+     "hint": "Комментарий к объявлению",
+     "sample": "Сборка на dev в 16:00",
+     "options": []
+    }
+   ],
+   "confirmations": []
+  },
+  {
+   "code": "OTHER",
+   "title": "Другое",
+   "emoji": "📝",
+   "who": "всё остальное",
+   "fields": [
+    {
+     "key": "Проект",
+     "icon": "📁",
+     "kind": "project",
+     "required": true,
+     "hint": "Из списка или любое другое название",
+     "sample": "Payments Backend",
+     "options": []
+    },
+    {
+     "key": "Репозиторий",
+     "icon": "📦",
+     "kind": "repo",
+     "required": false,
+     "hint": "Один репозиторий проекта; тогда MR можно указать номером (!214)",
+     "sample": "payments-api",
+     "options": []
+    },
+    {
+     "key": "Суть заявки",
+     "icon": "📌",
+     "kind": "note",
+     "required": true,
+     "hint": "Что нужно сделать",
+     "sample": "Перезапустить consumer limits-events",
+     "options": []
+    },
+    {
+     "key": "MR",
+     "icon": "🔗",
+     "kind": "links",
+     "required": false,
+     "hint": "Ссылки на merge request — по одной в строке",
+     "sample": "!214",
+     "options": []
+    },
+    {
+     "key": "Другое",
+     "icon": "📎",
+     "kind": "files",
+     "required": false,
+     "hint": "📎 Другое — логи, скриншоты, прочее",
+     "sample": "error.png, app.log",
+     "options": []
+    },
+    {
+     "key": "Описание",
+     "icon": "📝",
+     "kind": "note",
+     "required": false,
+     "hint": "Что ещё важно знать DevOps",
+     "sample": "Сначала деплой auth-service, потом gateway",
+     "options": []
+    }
+   ],
+   "confirmations": []
+  }
+ ],
+ "projects": [
+  {
+   "name": "Payments",
+   "streams": [
+    {
+     "name": "Backend",
+     "code": "payments_backend",
+     "repos": [
+      "payments-api",
+      "payments-worker",
+      "limits-service"
+     ]
+    },
+    {
+     "name": "Web",
+     "code": "payments_web",
+     "repos": [
+      "payments-web"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mobile Bank",
+   "streams": [
+    {
+     "name": "Main",
+     "code": "mobile",
+     "repos": [
+      "mobile-bff",
+      "mobile-app"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Cards",
+   "streams": [
+    {
+     "name": "Main",
+     "code": "cards",
+     "repos": [
+      "cards-service"
+     ]
+    }
+   ]
+  }
+ ],
+ "announcementKinds": [
+  "Открытие приёма",
+  "Отсечка",
+  "Собрано и на dev",
+  "Последний день",
+  "Развёрнуто",
+  "Завершён",
+  "Задержка"
+ ],
+ "prefill": null,
+ "limits": {
+  "files": 10,
+  "fileBytes": 20971520,
+  "totalBytes": 52428800
+ }
+}
